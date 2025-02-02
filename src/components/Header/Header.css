@@ -1,0 +1,186 @@
+/*  
+.header {
+    font-family: "Arial", sans-serif;
+    background-color: #fff;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+  }
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: contents;
+  }
+  
+  
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 10px;
+  }
+  
+  .contact-info span {
+    margin-right: 30px;
+    margin: 40px;
+  }
+  .actions {
+    margin-right: 60px;
+  }
+  .actions .language {
+    border: none;
+  }
+  .actions button {
+    margin-left: 15px;
+    border: 1px solid black;
+    background: white;
+    color: black;
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .actions button:hover {
+    background: black;
+    color: white;
+  }
+  
+  
+  .header-bottom {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    gap: 20px;
+  }
+  
+  .logo-section h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .logo-section .pro {
+    color: black;
+    margin-left: 70px;
+  }
+  .logo-section .bottom-logo {
+    margin-left: 70px;
+  }
+  .logo-section .Trader {
+    font-weight: lighter;
+  }
+  .logo-section p {
+    font-size: 12px;
+    margin: 5px 0 0;
+    color: #555;
+  }
+  
+  .stats {
+    background-color: #e7f7e9;
+    padding: 5px 15px;
+    margin-left: 60px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: x-large;
+    display: flex;
+    align-items: center;
+  }
+  
+  .ad-stats {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .ad-stats .digit {
+    background: #28a745;
+    color: #fff;
+    font-size: 18px;
+    padding: 5px 8px;
+    border-radius: 3px;
+  }
+  
+  .ad-stats .label {
+    margin-left: 10px;
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .search-section {
+    display: flex;
+    align-items: center;
+    margin-left: 400px;
+    border: 1px solid #ccc;
+    /* border-radius: 20px;
+     overflow: hidden; */
+  /* }
+  
+  .search-input {
+    border: none;
+    padding: 10px 15px;
+    outline: none;
+    font-size: 14px;
+    color: #555;
+    width: 300px;
+  }
+  button.search-button {
+    border-radius: 0px;
+  }
+  button.account-button {
+    border-radius: 0px;
+    margin-right: 40px;
+  }
+  .search-button {
+    border: none;
+    background: #28a745;
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .account-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .account-button {
+    border: 1px solid black;
+    background: black;
+    color: white;
+    padding: 10px 20px;
+
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+  }
+  
+  .account-button:hover {
+    background: white;
+    color: black;
+    border: 1px solid black;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .header-container {
+      padding: 0 10px;
+    }
+  
+    .header-bottom {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .search-input {
+      width: 100%;
+    }
+  } */
+    
