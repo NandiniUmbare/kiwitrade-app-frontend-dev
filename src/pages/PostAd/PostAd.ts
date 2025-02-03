@@ -29,12 +29,12 @@ export interface DistrictType {
 
 export interface FormDataType {
     title: string;
-    district: number;
-    city: number;
-    suburb: number;
+    districtId: number;
+    cityId: number;
+    suburbId: number;
     price:number;
-    currency: string;
-    reason: string;
+    noPrice: string;
+    description: string;
 }
 
 export interface CityType {

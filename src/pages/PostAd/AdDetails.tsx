@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { AdDetailsTypes, CityType, DistrictType, FormDataType, SuburbType, Type } from './PostAd'
 import { FaEdit } from 'react-icons/fa'
 import {MdPhotoLibrary } from 'react-icons/md';
-import { getCity, getDistrict, getSuburb } from '@/api/data';
+import { getCity, getDistrict, getSuburb, postAd } from '@/api/data';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import ImageUpload from '@/components/ImageUpload';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const AdDetails = ({
   categories,
@@ -15,12 +17,13 @@ const AdDetails = ({
   typeData,
   selectedType,
 }: AdDetailsTypes) => {
-  const [district, setDistrict] = useState<DistrictType>([]);
-  const [cities, setCities] = useState<CityType>([]);
-  const [suburb, setSuburb] = useState<SuburbType>([]);
-  const [formData, setFormData] = useState<FormDataType>({});
+  const [district, setDistrict] = useState<DistrictType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
+  const [suburb, setSuburb] = useState<SuburbType[]>([]);
+  const [formData, setFormData] = useState<FormDataType>({} as FormDataType);
   const [isOn, setIsOn] = useState<boolean>(false);
-  const onChange = (event) => {
+  const {images} = useSelector((state: RootState) => state.image);
+  const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -32,15 +35,26 @@ const AdDetails = ({
     setDistrict(response.datas);
   };
   const getCityData = async () => {
-    const response = await getCity(formData.district);
+    const response = await getCity(formData.districtId);
     setCities(response.datas);
   };
   const getSuburbData = async () => {
-    const response = await getSuburb(formData.city, formData.district);
+    const response = await getSuburb(formData.cityId, formData.districtId);
     setSuburb(response.datas);
   };
-  const handleSave = () => {
-    console.log(formData);
+  const handleSave = async() => {
+    // console.log(formData);
+    const response = await postAd({
+      ...formData,
+      categoryId: selectedCategory,
+      groupId: selectedGroup,
+      typeId: selectedType,
+      photo: images.join(' '),
+    });
+    // if(response.status === 200){
+    //   console.log('Ad posted successfully');
+    // }
+    console.log(response)
   };
   useEffect(() => {
     getDistrictData();
@@ -65,9 +79,7 @@ const AdDetails = ({
             <h3 className="text-md">All fields in this section are required.</h3>
             <div className="relative w-full">
               <label
-                className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                            ${formData.title ? 'text-m top-2 left-2 bg-white px-3 text-blue-500' : 'text-base'}
-                            `}
+                className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
               >
                 Title
               </label>
@@ -82,17 +94,15 @@ const AdDetails = ({
             </div>
             <div className="relative w-full">
               <label
-                className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                            ${formData.district ? 'text-m top-2 left-2 bg-white px-3 text-blue-500' : 'text-base'}
-                            `}
+                className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
               >
                 Select a district
               </label>
               <select
                 className="border border-gray-300 rounded-md p-3 mt-6 w-[100%]"
-                value={formData.district}
+                value={formData.districtId}
                 required
-                id="district"
+                id="districtId"
                 onChange={(e) => onChange(e)}
               >
                 <option value="" disabled></option>
@@ -105,17 +115,15 @@ const AdDetails = ({
             </div>
             <div className="relative w-full">
               <label
-                className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                            ${formData.city ? 'text-m top-2 left-2 bg-white px-3 text-blue-500' : 'text-base'}
-                            `}
+                className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
               >
                 Select a city
               </label>
               <select
                 className="border border-gray-300 rounded-md p-3 mt-6 w-[100%]"
-                value={formData.city}
+                value={formData.cityId}
                 required
-                id="city"
+                id="cityId"
                 onChange={(e) => onChange(e)}
               >
                 <option value="" disabled></option>
@@ -128,17 +136,15 @@ const AdDetails = ({
             </div>
             <div className="relative w-full">
               <label
-                className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                            ${formData.suburb ? 'text-m top-2 left-2 bg-white px-3 text-blue-500' : 'text-base'}
-                            `}
+                className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
               >
                 Select a suburb
               </label>
               <select
                 className="border border-gray-300 rounded-md p-3 mt-6 w-[100%]"
-                value={formData.suburb}
+                value={formData.suburbId}
                 required
-                id="suburb"
+                id="suburbId"
                 onChange={(e) => onChange(e)}
               >
                 <option value="" disabled></option>
@@ -154,9 +160,7 @@ const AdDetails = ({
                 <div className="flex w-[50%]">
                   <div className="relative w-full">
                     <label
-                      className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                                    ${formData.price ? 'text-m top-4 left-2 bg-white px-3 text-blue-500' : 'text-base top-3 left-2'}
-                                    `}
+                      className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
                     >
                       Price
                     </label>
@@ -166,30 +170,11 @@ const AdDetails = ({
                       required
                       onChange={(e) => onChange(e)}
                       id="price"
-                      className="border border-gray-300 rounded-l-md p-3 mt-6 w-[100%] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="border border-gray-300 rounded-md p-3 mt-6 w-[100%] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
-                  <div className="relative w-full">
-                    <label
-                      className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                                    ${formData.currency ? 'text-m top-4 left-2 bg-white px-3 text-blue-500' : 'text-base top-4 left-2'}
-                                    `}
-                    >
-                      Currency
-                    </label>
-                    <select
-                      className="border border-gray-300 rounded-r-md p-3 mt-6 w-[100%]"
-                      value={formData.currency}
-                      id="currency"
-                      onChange={(e) => onChange(e)}
-                    >
-                      <option key="kyd" value="kyd">
-                        KYD
-                      </option>
-                      <option key="usd" value="usd">
-                        USD
-                      </option>
-                    </select>
+                  <div className="relative w-full mt-10 ml-4 text-left">
+                    <h3 className='text-md'>NZD</h3>
                   </div>
                 </div>
               )}
@@ -211,16 +196,14 @@ const AdDetails = ({
               {isOn && (
                 <div className="relative w-[50%]">
                   <label
-                    className={`absolute left-3 top-9 text-gray-400 transition-all duration-300 
-                                ${formData.reason ? 'text-m top-4 left-2 bg-white px-3 text-blue-500' : 'text-base top-4 left-2'}
-                                `}
+                    className='absolute text-m top-3 left-2 bg-white px-3 text-gray-400'
                   >
                     Reason
                   </label>
                   <select
                     className="border border-gray-300 rounded-md p-3 mt-6 w-[100%]"
-                    value={formData.reason}
-                    id="reason"
+                    value={formData.noPrice}
+                    id="noPrice"
                     onChange={(e) => onChange(e)}
                   >
                     <option value="" disabled>
@@ -239,7 +222,7 @@ const AdDetails = ({
             <div className="flex flex-col w-full pt-4 mb-6">
               <h3 className="text-md text-left">Discription</h3>
               <ReactQuill
-                value={formData.discription}
+                value={formData.description}
                 onChange={(e) => onChange(e)}
                 theme="snow"
                 className="border border-gray-300 shadow-sm"

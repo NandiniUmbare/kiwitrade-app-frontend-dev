@@ -1,9 +1,40 @@
+// import { uploadImage } from '@/api/data';
+import { setImages } from '@/redux/slice/images';
+import { RootState } from '@/redux/store';
 import React, { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ImageUpload: React.FC = () => {
-  const [images, setImages] = useState<string[]>([]);
+  // const [images, setImages] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  const {images} = useSelector((state: RootState) => state.image);
   const [notification, setNotification] = useState<string | null>(null);
+
+  const postImage = async (file: File) => {
+    // const reader = new FileReader();
+    // const binaryString = reader.readAsBinaryString(file);
+    // console.log(reader.readAsBinaryString(file))
+    // console.log(file)
+    const formData = new FormData();
+    formData.append('file', file);
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    try {
+      const response = await fetch('https://api.ekiwitrade.com/UploadFile',{
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      console.log(response)
+    } catch (error) {
+      console.log(error);
+      setNotification('Failed to upload image');
+    }
+  }
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: File[]) => {
@@ -27,10 +58,17 @@ const ImageUpload: React.FC = () => {
           const reader = new FileReader();
           reader.onload = (event: ProgressEvent<FileReader>) => {
             const result = event.target?.result as string;
-            setImages((prevImages) => [...prevImages, result]);
+            dispatch(setImages([...images, result]));
+            // postImage(result);
           };
           reader.readAsDataURL(file);
+          // reader.onload = (event: ProgressEvent<FileReader>) => {
+          //   const result = event.target?.result as string;
+          //   setImages((prevImages) => [...prevImages, result]);
+          //   postImage(result);
+          // };
         });
+        
         setNotification(`Successfully uploaded ${validFiles.length} image(s)`);
       }
       if (invalidFiles.length > 0) {
@@ -38,9 +76,9 @@ const ImageUpload: React.FC = () => {
           `Failed to upload ${invalidFiles.length} image(s). Invalid format or size: ${invalidFiles.join(', ')}`,
         );
       }
-      setTimeout(() => setNotification(null), 5000);
+      setTimeout(() => setNotification(null), 3000);
     },
-    [images],
+    [dispatch, images],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -57,7 +95,7 @@ const ImageUpload: React.FC = () => {
     const temp = imagesClone[dragImage.current];
     imagesClone[dragImage.current] = imagesClone[dragImageOver.current];
     imagesClone[dragImageOver.current] = temp;
-    setImages(imagesClone);
+    dispatch(setImages(imagesClone));
   };
   return (
     <div className="container pt-6">
