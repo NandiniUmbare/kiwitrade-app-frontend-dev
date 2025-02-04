@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Header: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <header className="bg-white shadow w-full">
+    <header className="bg-transparent shadow w-full">
       {/* Full-width container */}
       <div className="w-full">
         {/* Top Section */}
@@ -30,8 +30,8 @@ const Header: React.FC = () => {
         <div className="flex flex-wrap items-center gap-4 sm:gap-8 py-4 px-4 sm:px-14 ">
           {/* Logo Section */}
           <div className="w-full sm:w-auto text-start sm:text-left">
-            <h1 onClick={()=> navigate('/')} className="text-2xl font-bold cursor-pointer">
-              <span className="text-black">PRO</span>
+            <h1 onClick={() => navigate('/')} className="text-2xl font-bold cursor-pointer">
+              <span className="text-green-800">PRO</span>
               <span className="font-light">Trader</span>
             </h1>
             <p className="text-sm text-gray-500">Trade Like A Real Pro</p>
