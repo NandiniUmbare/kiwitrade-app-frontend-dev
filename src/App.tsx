@@ -14,6 +14,7 @@ import BuyAndSell from './components/BrowseByCategory/BuyAndSell';
 import Jobs from './components/BrowseByCategory/Jobs';
 import ServicesAndSpecials from './components/BrowseByCategory/ServicesAndSpecials';
 import CommunityAndEvents from './components/BrowseByCategory/CommunityAndEvents';
+import PostListing from './components/BrowseByCategory/PostListing';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/services-specials" element={<ServicesAndSpecials />} />
             <Route path="/community-events" element={<CommunityAndEvents />} />
+            <Route path='/:category/:type' element={<PostListing />} />
           </Routes>
           <Footer />
         </BrowserRouter>

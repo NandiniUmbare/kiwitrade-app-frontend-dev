@@ -69,3 +69,17 @@ export const postAd = async(data: any) => {
         console.log(error);
     }
 }
+
+export const getPostBrowseByCategory = async(categoryId: number, groupId:number, typeId: number) => {
+    try {
+        if(typeId === 0){
+            const response = await axiosInstance.get(`/GetProductByCatGroup?categoryId=${categoryId}&groupId=${groupId}`);
+            return response.data;
+        } else {
+            const response = await axiosInstance.get(`/GetProductByCatGroupType?categoryId=${categoryId}&groupId=${groupId}&TypeId=${typeId}`);
+            return response.data;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}

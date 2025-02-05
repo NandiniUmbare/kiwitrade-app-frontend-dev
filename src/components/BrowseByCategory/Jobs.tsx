@@ -1,12 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import jobs from '@assets/images/jobs.png';
 import Header from '../Header';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedGroup } from '@/redux/slice/category';
+import { RootState } from '@/redux/store';
+import { getGroup } from '@/api/data';
+import { Group } from '@/pages/PostAd/PostAd';
+import { useNavigate } from 'react-router-dom';
 
 const Jobs: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState<string>('');
-  useEffect(() => {
-    console.log(selectedOption);
-  }, [selectedOption]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {selectedCategory} = useSelector((state: RootState) => state.category);
+  const [groups, setGroups] = useState<Group>([]);
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const groupNames = ['Find Talent', 'Find Job'];
+  const getGroupData = async() => {
+    const response = await getGroup(selectedCategory ?? 0);
+    setGroups(response.datas);
+  }
+  const handleClick = (id:number) => {
+    setSelectedOption(id)
+    dispatch(setSelectedGroup(id));
+    navigate(`/jobs/0`);
+  }
+  useEffect(()=>{
+    getGroupData();
+    dispatch(setSelectedGroup(selectedOption));
+  },[])
   return (
     <div className="relative w-full h-screen bg-gray-100">
       <div className="absolute inset-0">
@@ -18,19 +39,16 @@ const Jobs: React.FC = () => {
         <h1 className="text-4xl text-center p-6 text-white font-bold mt-16">
           Connecting great candidates with great jobs
         </h1>
-        <div className="flex">
-          <div
-            onClick={() => setSelectedOption('find-talents')}
-            className="bg-gray-100 bg-opacity-30 px-16 py-8"
+        <div className="flex gap-4">
+          {groups.map((group: Group, index:number)=>(
+            <div
+            key={group.groupId}
+            onClick={() => handleClick(group.groupId)}
+            className="bg-gray-100 bg-opacity-30 px-16 py-8 cursor-pointer"
           >
-            <h3 className="text-white text-xl font-semibold">Find Talent</h3>
+            <h3 className="text-white text-xl font-semibold">{groupNames[index]}</h3>
           </div>
-          <div
-            onClick={() => setSelectedOption('find-jobs')}
-            className="bg-gray-100 bg-opacity-30 px-16 py-8"
-          >
-            <h3 className="text-white text-xl font-semibold">Find Jobs</h3>
-          </div>
+          ))}
         </div>
       </div>
     </div>

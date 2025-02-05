@@ -9,6 +9,8 @@ export interface Category {
 interface DataState {
     loading: boolean;
     categories: Category[];
+    selectedCategory: number | null;
+    selectedGroup: number | null;
     error: string | null;
 }
   
@@ -28,12 +30,21 @@ export const getCategories = createAsyncThunk<Category[]>(
 const initialState: DataState = {
     loading: false,
     categories: [],
+    selectedCategory: null,
+    selectedGroup: null,
     error: null,
 };
 const categorySlice = createSlice({
   name: "category",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedCategory: (state, action) => {
+      state.selectedCategory = action.payload;
+    },
+    setSelectedGroup: (state, action) => {
+      state.selectedGroup = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getCategories.pending, (state) => {
@@ -52,5 +63,6 @@ const categorySlice = createSlice({
 });
 
 // export const { setCategories } = categorySlice.actions;
+export const {setSelectedCategory, setSelectedGroup} = categorySlice.actions;
 export default categorySlice.reducer;
 

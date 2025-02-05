@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './BrowseByCategory.css';
 import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers } from 'react-icons/fa';
-import { getCategories } from '@/redux/slice/category';
+import { getCategories, setSelectedCategory } from '@/redux/slice/category';
 import { AppDispatch, RootState } from '@/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +26,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ title, imageUrl }) => {
 };
 
 const BrowseByCategory: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const appDispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch();
   const { loading, categories, error } = useSelector((state: RootState) => state.category);
   const navigate = useNavigate();
   const iconsMap: Record<number, { imageUrl: string; icon: JSX.Element }> = {
@@ -82,11 +83,12 @@ const BrowseByCategory: React.FC = () => {
   };
 
   const handleClick = (id: number) => {
+    dispatch(setSelectedCategory(id));
     navigate(redirection(id));
     // You can add navigation or other logic here
   };
   useEffect(() => {
-    dispatch(getCategories());
+    appDispatch(getCategories());
   }, [dispatch]);
 
   return (

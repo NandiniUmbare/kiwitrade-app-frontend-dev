@@ -1,17 +1,36 @@
+import { getGroup } from '@/api/data';
 import { Group } from '@/pages/PostAd/PostAd';
-import React from 'react';
+import { setSelectedGroup } from '@/redux/slice/category';
+import { RootState } from '@/redux/store';
+import React, { useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const BuyAndSell: React.FC = () => {
-  const [selectedTab, setSelectedTab] = React.useState<string>('All');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {selectedCategory} = useSelector((state: RootState) => state.category);
+  const [selectedTab, setSelectedTab] = React.useState<number>(0);
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const groups: Group = [
-    { groupId: 0, groupName: 'All', categoryId: 3 },
-    { groupId: 1, groupName: 'For Sale', categoryId: 3 },
-    { groupId: 2, groupName: 'Free', categoryId: 3 },
-    { groupId: 3, groupName: 'Garage / Moving Sale', categoryId: 3 },
-    { groupId: 4, groupName: 'Wanted', categoryId: 3 },
-  ];
+  const [groups, setGroups] = React.useState<Group[]>([{groupId: 0, groupName: 'All', categoryId: selectedCategory ?? 0}]);
+  const getGroupData = async () => {
+    const response = await getGroup(selectedCategory ?? 0);
+    setGroups([...groups, ...response.datas]);
+  }
+  const handleSelectTabClick = (id: number) => {
+    setSelectedTab(id);
+    dispatch(setSelectedGroup(id));
+  }
+  const handleClick = () => {
+    console.log(searchValue);
+    navigate(`/buy-and-sell/0`);
+  }
+  useEffect(()=>{
+    dispatch(setSelectedGroup(selectedTab));
+    getGroupData();
+  },[])
+
   return (
     <div className="relative w-full h-screen bg-gray-200">
       <div className="relative z-10 flex flex-col items-center h-full">
@@ -21,8 +40,8 @@ const BuyAndSell: React.FC = () => {
             {groups.map((tab: Group) => (
               <button
                 key={tab.groupId}
-                onClick={() => setSelectedTab(tab.groupName)}
-                className={`px-8 py-2 font-semibold runded-md ${selectedTab === tab.groupName ? 'border-b border-b-blue-300 text-blue-400' : ''}`}
+                onClick={() => handleSelectTabClick(tab.groupId)}
+                className={`px-8 py-2 font-semibold runded-md ${selectedTab === tab.groupId ? 'border-b border-b-blue-300 text-blue-400' : ''}`}
               >
                 {tab.groupName}
               </button>
@@ -36,7 +55,7 @@ const BuyAndSell: React.FC = () => {
               onChange={(e) => setSearchValue(e.target.value)}
               className="w-full border border-gray-200 p-2 rounded-l-md"
             />
-            <button className="bg-green-500 text-white font-semibold text-lg rounded-r-md p-2 flex items-center gap-2">
+            <button onClick={handleClick} className="bg-green-500 text-white font-semibold text-lg rounded-r-md p-2 flex items-center gap-2">
               <FaSearch />
               Find
             </button>
