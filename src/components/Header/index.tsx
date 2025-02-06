@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import SignInModal from './SignInModal';
+import SignIn from '../../pages/User/SignIn';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  
   return (
     <header className="bg-transparent shadow w-full">
       {/* Full-width container */}
@@ -60,12 +65,24 @@ const Header: React.FC = () => {
               🔍
             </button>
           </div>
-
+          <SignInModal 
+            isOpen={isModalOpen} 
+            onClose={() => setModalOpen(false)}>
+              <SignIn onClose={() => setModalOpen(false)}/>
+          </SignInModal>
           {/* My Account Section (Desktop only) */}
           <div className="hidden sm:block">
-            <button className="px-4 py-2 bg-black text-white border border-black rounded hover:bg-white hover:text-black transition">
-              👤 My Account
-            </button>
+            {
+              user ? (
+                <button className="px-4 py-2 bg-black text-white border border-black rounded hover:bg-white hover:text-black transition">
+                  👤 My Account
+                </button>
+              ) : (
+                <button onClick={() => setModalOpen(true)} className="px-4 py-2 bg-black text-white border border-black rounded hover:bg-white hover:text-black transition">
+                  🚀 Sign in
+                </button>
+              )
+            }
           </div>
         </div>
       </div>

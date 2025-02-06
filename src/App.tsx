@@ -15,6 +15,9 @@ import Jobs from './components/BrowseByCategory/Jobs';
 import ServicesAndSpecials from './components/BrowseByCategory/ServicesAndSpecials';
 import CommunityAndEvents from './components/BrowseByCategory/CommunityAndEvents';
 import PostListing from './components/BrowseByCategory/PostListing';
+import Register from './pages/User/Register';
+import SignIn from './pages/User/SignIn';
+import ForgetPassword from './pages/User/ForgetPassword';
 
 function App() {
   return (
@@ -32,6 +35,9 @@ function App() {
             <Route path="/services-specials" element={<ServicesAndSpecials />} />
             <Route path="/community-events" element={<CommunityAndEvents />} />
             <Route path='/:category/:type' element={<PostListing />} />
+            <Route path='/user/register' element={<Register />} />
+            <Route path='/user/login/:page' element={<SignIn onClose={() => {}} />} />
+            <Route path='/user/forgetpassword' element={<ForgetPassword/>}/>
           </Routes>
           <Footer />
         </BrowserRouter>

@@ -61,7 +61,7 @@ export const uploadImage = async(file: File) => {
     }
 }
 
-export const postAd = async(data: any) => {
+export const postAd = async(data) => {
     try {
         const response = await axiosInstance.post('/UpsertProduct', data);
         return response.data;
