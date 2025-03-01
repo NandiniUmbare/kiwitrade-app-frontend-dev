@@ -8,6 +8,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import ImageUpload from '@/components/ImageUpload';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import OptionalFields from './OptionalFields';
 
 const AdDetails = ({
   categories,
@@ -16,6 +17,7 @@ const AdDetails = ({
   selectedGroup,
   typeData,
   selectedType,
+  setNext
 }: AdDetailsTypes) => {
   const [district, setDistrict] = useState<DistrictType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
@@ -32,15 +34,15 @@ const AdDetails = ({
   };
   const getDistrictData = async () => {
     const response = await getDistrict();
-    setDistrict(response.datas);
+    setDistrict(response.data);
   };
   const getCityData = async () => {
     const response = await getCity(formData.districtId);
-    setCities(response.datas);
+    setCities(response.data);
   };
   const getSuburbData = async () => {
     const response = await getSuburb(formData.cityId, formData.districtId);
-    setSuburb(response.datas);
+    setSuburb(response.data);
   };
   const handleSave = async() => {
     // console.log(formData);
@@ -51,10 +53,11 @@ const AdDetails = ({
       typeId: selectedType,
       photo: images.join(' '),
     });
-    // if(response.status === 200){
-    //   console.log('Ad posted successfully');
-    // }
-    console.log(response)
+    if(response.status === 200){
+      console.log('Ad posted successfully');
+      console.log(response)
+    }
+    
   };
   useEffect(() => {
     getDistrictData();
@@ -67,7 +70,7 @@ const AdDetails = ({
     <div className="p-6 bg-white border border-gray-400 rounded-md">
       <div className="flex justify-between">
         <h4>{`${categories[selectedCategory - 1]?.categoryName}->${groups[selectedGroup - 1]?.groupName}->${typeData?.find((t: Type) => t.typeId === selectedType)?.typeName}`}</h4>
-        <button className="bg-gray-600 text-white rounded-md p-3">Change Category</button>
+        <button onClick={()=> setNext(false)} className="bg-gray-600 text-white rounded-md p-3">Change Category</button>
       </div>
       <div className="flex w-[100%] gap-6 pt-8">
         <div className="w-1/2">
@@ -245,6 +248,13 @@ const AdDetails = ({
             </div>
           </div>
         </div>
+      </div>
+      <div className='flex w-full'>
+        <OptionalFields 
+          selectedCategory={selectedCategory}
+          selectedGroup={selectedGroup}
+          selectedType={selectedType}
+        />
       </div>
       <div className="flex justify-end">
         <button onClick={handleSave} className={`text-2xl text-white p-3 rounded-lg bg-green-500`}>

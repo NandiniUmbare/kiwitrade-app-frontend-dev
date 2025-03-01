@@ -14,12 +14,13 @@ export interface Type {
 }
 
 export interface AdDetailsTypes {
-    categories: Category; 
+    categories: Category[]; 
     selectedCategory:number; 
-    groups:Group; 
+    groups:Group[]; 
     selectedGroup:number; 
-    typeData:Type;
+    typeData:Type[];
     selectedType:number;
+    setNext: ()=>void
 }
 
 export interface DistrictType {
@@ -33,7 +34,7 @@ export interface FormDataType {
     cityId: number;
     suburbId: number;
     price:number;
-    noPrice: string;
+    noPrice?: string;
     description: string;
 }
 

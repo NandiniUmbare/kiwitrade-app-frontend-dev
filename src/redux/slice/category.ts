@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { axiosInstance } from "@/api";
+import categoryjson from "@/api/catpgory.json";
+import React from "react";
 
 export interface Category {
+    icon: React.ReactNode;
+    imageUrl: string | undefined;
     categoryId:number;
     categoryName:string;
 }
@@ -18,11 +21,12 @@ export const getCategories = createAsyncThunk<Category[]>(
     'data/getCategories', // Name of the action
     async () => {
       try {
-              const response = await axiosInstance.get('/api/Lookup/category');
-              const data: Category[] = response.data;
-              return data.datas;
+              // const response = await axiosInstance.get('/api/Lookup/category');
+              const data = categoryjson.data as Category[];
+              return data;
           } catch (error) {
-              console.log(error)
+              console.log(error);
+              throw new Error('Failed to fetch categories');
           }
         }
   );

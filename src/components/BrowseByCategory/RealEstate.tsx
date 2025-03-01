@@ -16,7 +16,7 @@ const RealEstate = () => {
 
   const getTypeData = async () => {
     const response = await getType(selectedTab, 1);
-    setType(response.datas);
+    setType(response.data);
   }
 
   const handleClick = (id:number) => {
@@ -36,7 +36,6 @@ const RealEstate = () => {
       </div>
       <div className="absolute inset-0 bg-black bg-opacity-10"></div>
       <div className="relative z-10 flex flex-col items-center h-full text-white">
-        <Header />
         <h1 className="text-4xl font-bold mt-16">Real Estate</h1>
         <div className="mt-6 bg-white rounded-lg shadow-md flex flex-col text-black">
           <div className="p-4 flex space-x-4">
@@ -53,7 +52,7 @@ const RealEstate = () => {
           <div className="px-4 py-4 rounded-md shadow-md">
             <select id='type' onChange={(e)=>navigate(`/real-estate/${e.target.value}`)} className="w-full outline-none bg-gray-200 text-black px-4 py-2 rounded-md shadow-md ">
               <option value="">Type</option>
-              {type.map((t) => (
+              {type && type.map((t) => (
                 <option key={t.typeId} value={t.typeId}>{t.typeName}</option>
               ))}
             </select>

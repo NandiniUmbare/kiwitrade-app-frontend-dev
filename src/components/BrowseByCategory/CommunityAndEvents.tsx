@@ -16,7 +16,7 @@ const CommunityAndEvents: React.FC = () => {
   const [groups, setGroups] = useState<Group[]>([{groupId: 0, groupName: 'All', categoryId: 6}]);
   const getGroupData = async() => {
     const response = await getGroup(selectedCategory ?? 0);
-    setGroups([...response.datas, ...groups]);
+    setGroups([...response.data, ...groups]);
   }
   const handleClick = (id:number) => {
     setSelectedTab(id);

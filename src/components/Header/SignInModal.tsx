@@ -6,7 +6,6 @@ interface SignInModalProps {
     children: React.ReactNode; 
 }
 const SignInModal: React.FC<SignInModalProps> = ({isOpen, onClose, children}) => {
-    console.log(isOpen,children);
     if(!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
@@ -18,4 +17,4 @@ const SignInModal: React.FC<SignInModalProps> = ({isOpen, onClose, children}) =>
   )
 }
 
-export default SignInModal
+export default React.memo(SignInModal)

@@ -16,7 +16,7 @@ const BuyAndSell: React.FC = () => {
   const [groups, setGroups] = React.useState<Group[]>([{groupId: 0, groupName: 'All', categoryId: selectedCategory ?? 0}]);
   const getGroupData = async () => {
     const response = await getGroup(selectedCategory ?? 0);
-    setGroups([...groups, ...response.datas]);
+    setGroups([...groups, ...response.data]);
   }
   const handleSelectTabClick = (id: number) => {
     setSelectedTab(id);

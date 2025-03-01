@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from '@/redux/store';
 import { Group, Type } from './PostAd';
 import { getGroup, getType } from '@/api/data';
 import AdDetails from './AdDetails';
+import OptionalFields from './OptionalFields';
 
 
 const PostAd: React.FC = () => {
@@ -43,11 +44,11 @@ const PostAd: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getGroupData = async () => {
     const response = await getGroup(selectedCategory ?? 0);
-    setGroups(response.datas);
+    setGroups(response.data);
   };
   const getTypeData = async () => {
     const response = await getType(selectedGroup ?? 0, selectedCategory ?? 0);
-    setType(response.datas);
+    setType(response.data);
   };
 
   useEffect(() => {
@@ -108,7 +109,7 @@ const PostAd: React.FC = () => {
           <div>
             <h3 className="text-left text-2xl items-center">Select a Type</h3>
             <div className="mt-2 mb-6 flex flex-wrap w-full text-center">
-              {type.map((data) => (
+              {type && type.map((data) => (
                 <div
                   key={data.typeId}
                   onClick={() => setSelectedType(data.typeId)}
@@ -138,6 +139,7 @@ const PostAd: React.FC = () => {
             selectedGroup={selectedGroup}
             typeData={type}
             selectedType={selectedType}
+            setNext={setNext}
           />
         </div>
       )}

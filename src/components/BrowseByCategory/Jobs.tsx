@@ -17,7 +17,7 @@ const Jobs: React.FC = () => {
   const groupNames = ['Find Talent', 'Find Job'];
   const getGroupData = async() => {
     const response = await getGroup(selectedCategory ?? 0);
-    setGroups(response.datas);
+    setGroups(response.data);
   }
   const handleClick = (id:number) => {
     setSelectedOption(id)

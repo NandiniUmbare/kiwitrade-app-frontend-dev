@@ -18,15 +18,15 @@ import PostListing from './components/BrowseByCategory/PostListing';
 import Register from './pages/User/Register';
 import SignIn from './pages/User/SignIn';
 import ForgetPassword from './pages/User/ForgetPassword';
+import MyAccount from './pages/User/MyAccount';
 
 function App() {
   return (
     <>
       <Provider store={store}>
         <BrowserRouter>
-          <Header />
           <Routes>
-            <Route path="/" element={<BrowseByCategory />} />
+            <Route path="/" element={<Header><BrowseByCategory /></Header>} />
             <Route path="/post-add" element={<PostAd />} />
             <Route path="/real-estate" element={<RealEstate />} />
             <Route path="/autos-boats" element={<AutosAndBoats />} />
@@ -38,9 +38,11 @@ function App() {
             <Route path='/user/register' element={<Register />} />
             <Route path='/user/login/:page' element={<SignIn onClose={() => {}} />} />
             <Route path='/user/forgetpassword' element={<ForgetPassword/>}/>
+            <Route path='/user/account' element={<MyAccount/>}/>
           </Routes>
           <Footer />
         </BrowserRouter>
+        
       </Provider>
     </>
   );

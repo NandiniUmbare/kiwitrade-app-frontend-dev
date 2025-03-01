@@ -15,7 +15,7 @@ const AutosAndBoats: React.FC = () => {
   const getGroupData = async () => {
     if(selectedCategory){
       const response = await getGroup(selectedCategory);
-      setGroups(response.datas);
+      setGroups(response.data);
     }
   }
   

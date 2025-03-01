@@ -1,38 +1,44 @@
-// import { uploadImage } from '@/api/data';
+import { uploadImage } from '@/api/data';
 import { setImages } from '@/redux/slice/images';
 import { RootState } from '@/redux/store';
+import { AxiosProgressEvent } from 'axios';
 import React, { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ImageUpload: React.FC = () => {
-  // const [images, setImages] = useState<string[]>([]);
   const dispatch = useDispatch();
+  const [displayImages, setDisplayImages] = useState<string[]>([]);
   const {images} = useSelector((state: RootState) => state.image);
   const [notification, setNotification] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null); 
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const postImage = async (file: File) => {
-    // const reader = new FileReader();
-    // const binaryString = reader.readAsBinaryString(file);
-    // console.log(reader.readAsBinaryString(file))
-    // console.log(file)
     const formData = new FormData();
     formData.append('file', file);
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    const onUploadProgress = (progressEvent: AxiosProgressEvent) => {
+      if (progressEvent.total) {
+        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        setUploadProgress(progress); 
+      }
     }
     try {
-      const response = await fetch('https://api.ekiwitrade.com/UploadFile',{
-        method: 'POST',
-        body: formData,
-      });
-      if (!response.ok) {
-        throw new Error('Upload failed');
+      const response = await uploadImage(formData,onUploadProgress)
+      setNotification('File uploaded successfully!');
+      setUploadProgress(100);
+      if (response) {
+        dispatch(setImages([...images, response.filePath]));
       }
-      console.log(response)
+      setDisplayImages([...displayImages, URL.createObjectURL(file)]);
     } catch (error) {
-      console.log(error);
-      setNotification('Failed to upload image');
+      setNotification('Failed to upload image : ',error );
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -56,20 +62,13 @@ const ImageUpload: React.FC = () => {
       } else {
         validFiles.forEach((file) => {
           const reader = new FileReader();
-          reader.onload = (event: ProgressEvent<FileReader>) => {
-            const result = event.target?.result as string;
-            dispatch(setImages([...images, result]));
-            // postImage(result);
+          reader.onload = () => {
+            postImage(file);
           };
           reader.readAsDataURL(file);
-          // reader.onload = (event: ProgressEvent<FileReader>) => {
-          //   const result = event.target?.result as string;
-          //   setImages((prevImages) => [...prevImages, result]);
-          //   postImage(result);
-          // };
         });
         
-        setNotification(`Successfully uploaded ${validFiles.length} image(s)`);
+        // setNotification(`Successfully uploaded ${validFiles.length} image(s)`);
       }
       if (invalidFiles.length > 0) {
         setNotification(
@@ -95,7 +94,7 @@ const ImageUpload: React.FC = () => {
     const temp = imagesClone[dragImage.current];
     imagesClone[dragImage.current] = imagesClone[dragImageOver.current];
     imagesClone[dragImageOver.current] = temp;
-    dispatch(setImages(imagesClone));
+    setDisplayImages(imagesClone);
   };
   return (
     <div className="container pt-6">
@@ -116,6 +115,18 @@ const ImageUpload: React.FC = () => {
           role="alert"
         >
           <strong className="font-bold">{notification}</strong>
+        </div>
+      )}
+
+      {uploading && uploadProgress !== null && (
+        <div className="mt-2">
+          <p className="text-gray-600 text-sm">Uploading: {uploadProgress}%</p>
+          <div className="w-full bg-gray-200 rounded h-2 mt-2">
+            <div
+              className="bg-blue-500 h-2 rounded"
+              style={{ width: `${uploadProgress}%` }}
+            ></div>
+          </div>
         </div>
       )}
       <div className="flex flex-col items-baseline pt-1">

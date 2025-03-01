@@ -1,35 +1,44 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import SignInModal from './SignInModal';
 import SignIn from '../../pages/User/SignIn';
+import { RootState } from '@/redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
+import { setUser } from '@/redux/slice/user';
+import { useAuthToken } from '@/hooks/useAuthToken';
+import Cookies from 'js-cookie';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  children: React.ReactNode;
+}
+
+const Header: React.FC<HeaderProps> = ({children}) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const {token} = useAuthToken();
+  const {user} = useSelector((state: RootState) => state.user);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      const token = Cookies.get('token');
+      console.log(token)
+      if (token) {
+        const userInfo = jwtDecode(token);
+        dispatch(setUser(userInfo));
+        console.log(userInfo)
+      }
+    } else {
+      dispatch(setUser(null));
+    }
+  }, []);
+console.log(user)
   return (
+    <>
     <header className="bg-transparent shadow w-full">
       {/* Full-width container */}
       <div className="w-full">
-        {/* Top Section */}
-        <div className="hidden sm:flex justify-between items-center text-sm text-gray-700 border-b border-gray-200 py-2 px-4 sm:px-8">
-          <div className="flex space-x-4 sm:space-x-8">
-            <span>📧 info@example.com</span>
-            <span>📞 Customer support</span>
-          </div>
-          <div className="flex space-x-2 sm:space-x-4">
-            <button
-              onClick={() => navigate('/post-add')}
-              className="px-4 py-2 text-black border border-black rounded-full hover:bg-black hover:text-white transition"
-            >
-              POST Ad
-            </button>
-            <button className="px-4 py-2 text-black  rounded-full hover:bg-black hover:text-white transition">
-              🌍 Language
-            </button>
-          </div>
-        </div>
 
         {/* Bottom Section */}
         <div className="flex flex-wrap items-center gap-4 sm:gap-8 py-4 px-4 sm:px-14 ">
@@ -71,10 +80,16 @@ const Header: React.FC = () => {
               <SignIn onClose={() => setModalOpen(false)}/>
           </SignInModal>
           {/* My Account Section (Desktop only) */}
+          <button
+              onClick={() => user && navigate('/post-add')}
+              className="px-4 py-2 text-black border border-black rounded-full hover:bg-black hover:text-white transition"
+            >
+              POST Ad
+            </button>
           <div className="hidden sm:block">
             {
               user ? (
-                <button className="px-4 py-2 bg-black text-white border border-black rounded hover:bg-white hover:text-black transition">
+                <button onClick={()=> navigate('/user/account')} className="px-4 py-2 bg-black text-white border border-black rounded hover:bg-white hover:text-black transition">
                   👤 My Account
                 </button>
               ) : (
@@ -87,6 +102,10 @@ const Header: React.FC = () => {
         </div>
       </div>
     </header>
+    <div>
+      {children}
+    </div>
+    </>
   );
 };
 

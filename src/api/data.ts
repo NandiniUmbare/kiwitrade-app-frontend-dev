@@ -1,4 +1,6 @@
+import { FormDataType } from "@/pages/PostAd/PostAd";
 import { axiosInstance } from "./index";
+import axios from "axios";
 
 export const getGroup = async(categoryId: number) => {
     try {
@@ -45,25 +47,30 @@ export const getSuburb = async(cityId:number, distId: number) => {
     }
 }
 
-export const uploadImage = async(file: File) => {
+import { AxiosProgressEvent } from "axios";
+import { FormDataProps } from "@/pages/User/Register";
+
+export const uploadImage = async(file: FormData, onUploadProgress: (progressEvent: AxiosProgressEvent) => void) => {
     try {
-        const response = await fetch('https://api.ekiwitrade.com/UploadFile',{
-            method: 'POST',
-            body: file,
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'multipart/form-data'
+        const response = await axios.post('https://api.ekiwitrade.com/UploadFile', 
+            file,
+            {
+                headers: {
+                  "accept": "*/*",
+                  "Content-Type": "multipart/form-data", 
+                },
+                onUploadProgress
             }
-        })
+        )
         return response;
     } catch (error) {
         console.log(error)
     }
 }
 
-export const postAd = async(data) => {
+export const postAd = async(data: FormDataType) => {
     try {
-        const response = await axiosInstance.post('/UpsertProduct', data);
+        const response = await axiosInstance.post('https://api.ekiwitrade.com/UpsertProduct', data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -81,5 +88,23 @@ export const getPostBrowseByCategory = async(categoryId: number, groupId:number,
         }
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const registerUser = async (data: FormDataProps) => {
+    try {
+        const response = await axiosInstance.post('/api/Users/register', data);
+        return response;
+    } catch (error: any) {
+        return error.response;
+    }
+}
+
+export const loginUser = async(data: {email: string, password: string}) => {
+    try {
+        const response = await axiosInstance.post('/api/Users/login',data);
+        return response.data;
+    } catch (error:any) {
+        return error.response.data;
     }
 }
