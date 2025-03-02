@@ -6,7 +6,6 @@ import { RootState } from '@/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { setUser } from '@/redux/slice/user';
-import { useAuthToken } from '@/hooks/useAuthToken';
 import Cookies from 'js-cookie';
 
 interface HeaderProps {
@@ -16,20 +15,17 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({children}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {token} = useAuthToken();
   const {user} = useSelector((state: RootState) => state.user);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const token = Cookies.get('token');
 
   useEffect(() => {
-    if (Cookies.get('token')) {
-      const token = Cookies.get('token');
       console.log(token)
       if (token) {
         const userInfo = jwtDecode(token);
         dispatch(setUser(userInfo));
         console.log(userInfo)
-      }
-    } else {
+      }else {
       dispatch(setUser(null));
     }
   }, []);

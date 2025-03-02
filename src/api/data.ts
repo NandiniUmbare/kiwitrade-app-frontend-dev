@@ -105,6 +105,18 @@ export const loginUser = async(data: {email: string, password: string}) => {
         const response = await axiosInstance.post('/api/Users/login',data);
         return response.data;
     } catch (error:any) {
+        if(error.status === 403){
+            return {message: "Too many attempt. Please try again..."} 
+        }
+        return error.response.data;
+    }
+}
+
+export const userGoogleLogin = async(data: {email: string}) => {
+    try {
+        const response = await axiosInstance.post('/api/Users/google-login', data);
+        return response.data;
+    } catch (error: any) {
         return error.response.data;
     }
 }

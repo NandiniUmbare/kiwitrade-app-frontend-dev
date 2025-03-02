@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {GoogleOAuthProvider, GoogleLogin, CredentialResponse} from '@react-oauth/google';
-import { loginUser } from '@/api/data';
+import { loginUser, userGoogleLogin } from '@/api/data';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 interface FormDataProps {
     email: string;
-    password: string;
+    password: string; 
     rememberMe: boolean;
 }
 interface SignInProps {
@@ -40,20 +41,36 @@ const SignIn: React.FC<SignInProps> = ({onClose}) => {
         console.log(error)
       }
     }
+    const googleLogin = async(email: string) =>{
+      try {
+        const response = await userGoogleLogin({
+          email: email
+        });
+        if(response.statusCode === 200){
+          Cookies.set('token', response.token,{ expires: 1 });
+          onClose();
+          navigate('/');
+        } else {
+          setErrors(response.message);
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleloginUser();
     }
-    // const handleLoginSuccess = (response: CredentialResponse) => {
-    //   const idToken = response.credential;
-    //   if (idToken) {
-    //     saveToken(idToken);
-    //     onClose();
-    //     if(params.page) navigate('/');
-    //   } else {
-    //     console.error('ID token is undefined');
-    //   }
-    // }
+    const handleLoginSuccess = (response: CredentialResponse) => {
+      const idToken = response.credential;
+      if (idToken) {
+        const userInfo = jwtDecode(idToken); 
+        googleLogin(userInfo.email);
+      } else {
+        console.error('ID token is undefined');
+      }
+              // dispatch(setUser(userInfo));
+    }
   return (
     <div className={`${params.page == 'page' ? 'py-8 flex items-center justify-center z-50 bg-gray-300':''}`}>
     <div className={`${params.page == 'page' ? 'lg:w-[35%] md:w-[50%] bg-white p-6 rounded-md shadow-lg relative':''}`}>
@@ -104,12 +121,12 @@ const SignIn: React.FC<SignInProps> = ({onClose}) => {
           </button>
         </form>
         <hr/>
-        {/* <div>
+        <div className='mt-8'>
         <span className="text-gray-700">Or</span>
         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ''}>
           <GoogleLogin onSuccess={handleLoginSuccess}/>        
         </GoogleOAuthProvider>
-        </div> */}
+        </div>
     </div>
     </div>
   )
