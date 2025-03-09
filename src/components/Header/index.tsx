@@ -15,20 +15,21 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({children}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {user} = useSelector((state: RootState) => state.user);
+  const {user, authToken} = useSelector((state: RootState) => state.user);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
-  const token = Cookies.get('token');
 
   useEffect(() => {
-      console.log(token)
+    if (Cookies.get('token')) {
+      const token = Cookies.get('token');
       if (token) {
         const userInfo = jwtDecode(token);
+        console.log(userInfo);
         dispatch(setUser(userInfo));
-        console.log(userInfo)
+      }
       }else {
       dispatch(setUser(null));
     }
-  }, []);
+  }, [authToken]);
 console.log(user)
   return (
     <>

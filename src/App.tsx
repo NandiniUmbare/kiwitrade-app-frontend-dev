@@ -27,18 +27,18 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Header><BrowseByCategory /></Header>} />
-            <Route path="/post-add" element={<PostAd />} />
-            <Route path="/real-estate" element={<RealEstate />} />
-            <Route path="/autos-boats" element={<AutosAndBoats />} />
-            <Route path="/buy-sell" element={<BuyAndSell />} />
-            <Route path="/jobs" element={<Jobs />} />
-            <Route path="/services-specials" element={<ServicesAndSpecials />} />
-            <Route path="/community-events" element={<CommunityAndEvents />} />
-            <Route path='/:category/:type' element={<PostListing />} />
+            <Route path="/post-add" element={<Header><PostAd /></Header>} />
+            <Route path="/real-estate" element={<Header><RealEstate /></Header>} />
+            <Route path="/autos-boats" element={<Header><AutosAndBoats /></Header>} />
+            <Route path="/buy-sell" element={<Header><BuyAndSell /></Header>} />
+            <Route path="/jobs" element={<Header><Jobs /></Header>} />
+            <Route path="/services-specials" element={<Header><ServicesAndSpecials /></Header>} />
+            <Route path="/community-events" element={<Header><CommunityAndEvents /></Header>} />
+            <Route path='/:category/:type' element={<Header><PostListing /></Header>} />
             <Route path='/user/register' element={<Register />} />
             <Route path='/user/login/:page' element={<SignIn onClose={() => {}} />} />
             <Route path='/user/forgetpassword' element={<ForgetPassword/>}/>
-            <Route path='/user/account' element={<MyAccount/>}/>
+            <Route path='/user/account' element={<Header><MyAccount/></Header>}/>
           </Routes>
           <Footer />
         </BrowserRouter>

@@ -1,7 +1,24 @@
 import React from 'react'
+import { setToken, setUser } from '@/redux/slice/user';
+import { useDispatch, useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import { RootState } from '@/redux/store';
 
-const MyAccount = () => {
-  return (
+const MyAccount: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const {user} = useSelector((state: RootState) => state.user);
+  const handleClick = (item: string) => () => {
+    if (item === "Logout") {
+      dispatch(setToken(null));
+      dispatch(setUser(null));
+      Cookies.remove('token');
+      navigate('/');
+     }
+  }
+  if (user) {
+    return (
     <div className="flex h-screen bg-gray-100">
         <div className="w-1/4 bg-white shadow-md p-4">
             <h1 className="text-2xl font-bold text-gray-800">My Account</h1>
@@ -10,13 +27,9 @@ const MyAccount = () => {
             </button>
             <ul className="mt-4 space-y-2">
           {[
-            "My Ads (0)",
-            "My Profile",
-            "Followed",
-            "Payments",
-            "Notification Settings",
+            "Logout"
           ].map((item, index) => (
-            <li key={index} className="py-2 px-4 hover:bg-gray-200 rounded-lg">
+            <li key={index} onClick={handleClick(item)} className="py-2 px-4 hover:bg-gray-200 rounded-lg">
               {item}
             </li>
           ))}
@@ -36,6 +49,10 @@ const MyAccount = () => {
         </div>
     </div>
   )
+  } else {
+    navigate('/')
+  }
+  
 }
 
 export default MyAccount

@@ -4,6 +4,8 @@ import {GoogleOAuthProvider, GoogleLogin, CredentialResponse} from '@react-oauth
 import { loginUser, userGoogleLogin } from '@/api/data';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { setToken } from '@/redux/slice/user';
 
 interface FormDataProps {
     email: string;
@@ -13,7 +15,8 @@ interface FormDataProps {
 interface SignInProps {
   onClose: () => void | null;
 }
-const SignIn: React.FC<SignInProps> = ({onClose}) => {
+const SignIn: React.FC<SignInProps> = ({ onClose }) => {
+  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormDataProps>({ email: '', password: '', rememberMe: false });
@@ -31,7 +34,8 @@ const SignIn: React.FC<SignInProps> = ({onClose}) => {
           password:formData.password
         });
         if(response.statusCode === 200){
-          Cookies.set('token', response.token,{ expires: 1 });
+          Cookies.set('token', response.token, { expires: 1 });
+          dispatch(setToken(response.token));
           onClose();
           navigate('/');
         } else {
@@ -47,7 +51,8 @@ const SignIn: React.FC<SignInProps> = ({onClose}) => {
           email: email
         });
         if(response.statusCode === 200){
-          Cookies.set('token', response.token,{ expires: 1 });
+          Cookies.set('token', response.token, { expires: 1 });
+          dispatch(setToken(response.token));
           onClose();
           navigate('/');
         } else {

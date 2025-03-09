@@ -18,7 +18,6 @@ const AutosAndBoats: React.FC = () => {
       setGroups(response.data);
     }
   }
-  
   const imageMapping: { [key: number]: { imageUrl: string; size: string } } = [
     {
       imageUrl: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',

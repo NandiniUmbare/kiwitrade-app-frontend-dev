@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { Button, Checkbox, Input, List, Radio } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
+import MapListing from './MapListing';
 export interface PostType {
   postId: number;
 }
@@ -25,17 +26,17 @@ const PostListing: React.FC = () => {
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
   const sectionFilterRef = useRef<HTMLButtonElement>(null);
 
-  // const {selectedCategory, selectedGroup} = useSelector((state: RootState) => state.category);
-  // const [posts, setPosts] = useState<PostType[]>([]);
-  // const params = useParams();
-  // const getPosts = async () => {
-  //   // Fetch posts based on selectedCategory and selectedGroup
-  //   if (selectedCategory !== null && selectedGroup !== null) {
-  //     const response = await getPostBrowseByCategory(selectedCategory, selectedGroup, Number(params.type));
-  //     console.log(response);
-  //     setPosts(response.data);
-  //   }
-  // }
+  const {selectedCategory, selectedGroup} = useSelector((state: RootState) => state.category);
+  const [posts, setPosts] = useState<PostType[]>([]);
+  const params = useParams();
+  const getPosts = async () => {
+    // Fetch posts based on selectedCategory and selectedGroup
+    if (selectedCategory !== null && selectedGroup !== null) {
+      const response = await getPostBrowseByCategory(selectedCategory, selectedGroup, Number(params.type));
+      console.log(response);
+      setPosts(response.data);
+    }
+  }
 
   const listings = [
     {
@@ -67,10 +68,11 @@ const PostListing: React.FC = () => {
       image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
     },
   ];
-  // useEffect(() => {
-  //   console.log(selectedCategory, selectedGroup,params.type);
-  //   getPosts();
-  // }, []);
+  useEffect(() => {
+    // console.log(selectedCategory, selectedGroup,params.type);
+    getPosts();
+  }, []);
+  console.log(posts);
   return (
     <div>
       <div className="flex items-center gap-2 mb-6 px-14 py-4">
@@ -108,7 +110,7 @@ const PostListing: React.FC = () => {
             </div>
           </div>
         )}
-        {(category === 'autos-boats' ||
+        {(category === 'autos-and-boats' ||
           category === 'buy-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
@@ -147,7 +149,7 @@ const PostListing: React.FC = () => {
             </div>
           </div>
           )}
-        {(category === 'autos-boats' ||
+        {(category === 'autos-and-boats' ||
         category === 'buy-sell' ||
         category === 'jobs' ||
         category === 'services-specials' ||
@@ -183,7 +185,7 @@ const PostListing: React.FC = () => {
           </div>
         </div>
         )}
-        {(category === 'autos-boats' ||
+        {(category === 'autos-and-boats' ||
           category === 'buy-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
@@ -287,7 +289,9 @@ const PostListing: React.FC = () => {
           ))}
         </div>
         ) : (
-          <div className="w-[100%] h-[500px] bg-gray-200">Map</div>
+            <div className="w-[100%] h-[500px] bg-gray-200">
+              <MapListing/>
+          </div>
         )}
       </div>
     </div>
