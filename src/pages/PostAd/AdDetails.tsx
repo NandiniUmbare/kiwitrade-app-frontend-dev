@@ -19,12 +19,17 @@ const AdDetails = ({
   selectedType,
   setNext
 }: AdDetailsTypes) => {
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [district, setDistrict] = useState<DistrictType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
   const [suburb, setSuburb] = useState<SuburbType[]>([]);
   const [formData, setFormData] = useState<FormDataType>({} as FormDataType);
+  const [optionalFields, setOptionalFields] = useState({});
   const [isOn, setIsOn] = useState<boolean>(false);
-  const {images} = useSelector((state: RootState) => state.image);
+  const { images } = useSelector((state: RootState) => state.image);
+  const {user} = useSelector((state: RootState) => state.user);
   const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setFormData((prevData) => ({
@@ -32,6 +37,23 @@ const AdDetails = ({
       [id]: value,
     }));
   };
+  console.log('optionalFields', optionalFields);
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position: GeolocationPosition) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (err: GeolocationPositionError) => {
+          setError(err.message);
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by this browser.");
+    }
+  };
+  
   const getDistrictData = async () => {
     const response = await getDistrict();
     setDistrict(response.data);
@@ -46,8 +68,12 @@ const AdDetails = ({
   };
   const handleSave = async() => {
     // console.log(formData);
+    console.log('latitude', latitude, 'longitude', longitude)
     const response = await postAd({
       ...formData,
+      createdDate: new Date(),
+      createdBy: user?.exp,
+      coordinate: `${latitude},${longitude}`,
       categoryId: selectedCategory,
       groupId: selectedGroup,
       typeId: selectedType,
@@ -55,11 +81,10 @@ const AdDetails = ({
     });
     if(response.status === 200){
       console.log('Ad posted successfully');
-      console.log(response)
     }
-    
   };
   useEffect(() => {
+    getLocation();
     getDistrictData();
   }, []);
   useEffect(() => {
@@ -76,7 +101,7 @@ const AdDetails = ({
         <div className="w-1/2">
           <div className="flex rounded-md items-center bg-gray-300 p-2 w-[100%] text-2xl">
             <FaEdit />
-            <h3>Ad Details</h3>
+            <h3 className='font-bold'>Ad Details</h3>
           </div>
           <div className="flex flex-col items-baseline pt-4">
             <h3 className="text-md">All fields in this section are required.</h3>
@@ -226,7 +251,7 @@ const AdDetails = ({
               <h3 className="text-md text-left">Discription</h3>
               <ReactQuill
                 value={formData.description}
-                onChange={(e) => onChange(e)}
+                onChange={(value) => setFormData((prevData) => ({ ...prevData, description: value }))}
                 theme="snow"
                 className="border border-gray-300 shadow-sm"
               />
@@ -237,7 +262,7 @@ const AdDetails = ({
         <div className="w-1/2">
           <div className="flex rounded-md items-center bg-gray-300 p-2 w-[100%] text-2xl">
             <MdPhotoLibrary />
-            <h3>Upload Photos</h3>
+            <h3 className='font-bold'>Upload Photos</h3>
           </div>
           <div className="flex flex-col items-baseline pt-4">
             <h3 className="text-md">
@@ -254,6 +279,8 @@ const AdDetails = ({
           selectedCategory={selectedCategory}
           selectedGroup={selectedGroup}
           selectedType={selectedType}
+          optionalFields={optionalFields}
+          setOptionalFields={setOptionalFields}
         />
       </div>
       <div className="flex justify-end">

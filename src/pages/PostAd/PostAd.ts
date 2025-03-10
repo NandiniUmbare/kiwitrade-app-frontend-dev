@@ -20,7 +20,7 @@ export interface AdDetailsTypes {
     selectedGroup:number; 
     typeData:Type[];
     selectedType:number;
-    setNext: ()=>void
+    setNext: (next: boolean) => void
 }
 
 export interface DistrictType {

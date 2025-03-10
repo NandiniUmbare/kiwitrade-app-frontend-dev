@@ -234,14 +234,16 @@ const PostListing: React.FC = () => {
         <div className="flex justify-end gap-4 mb-4">
           <div className="flex">
             <Button
+              size='large'
               onClick={() => setView('map')}
-              className="bg-transparent border border-green-400 rounded-r-none"
+              className={`hover:!bg-green-500 ${view === 'map' ? 'bg-green-500' : 'bg-transparent'} border border-green-400 rounded-r-none`}
             >
               <FaMap className="text-green-600" />
             </Button>
             <Button
+              size='large'
               onClick={() => setView('list')}
-              className="bg-transparent border border-green-400 rounded-l-none"
+              className={`${view === 'list' ? 'bg-green-500' : 'bg-transparent'} hover:!bg-green-500 border border-green-400 rounded-l-none`}
             >
               <FaTh className="text-green-600" />
             </Button>
@@ -249,6 +251,7 @@ const PostListing: React.FC = () => {
 
           <button className="bg-green-400 text-white px-4 py-2 rounded-md">Filter</button>
           <Button
+            size='large'
             onClick={() => setSortByFilter(!sortByFilter)}
             ref={sortByFilterRef}
             className="text-white bg-gray-800 px-4 py-3 rounded-md"

@@ -37,7 +37,7 @@ const MyAccount: React.FC = () => {
         <button className="w-full bg-red-500 text-white py-2 mt-4 rounded-lg">
           Delete Account
         </button>
-        <button className="w-full bg-gray-300 text-black py-2 mt-2 rounded-lg">
+        <button onClick={()=>navigate('/post-add')} className="w-full bg-gray-300 text-black py-2 mt-2 rounded-lg">
           Post Ad
         </button>
         </div>
