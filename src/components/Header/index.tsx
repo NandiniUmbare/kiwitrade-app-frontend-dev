@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { setUser } from '@/redux/slice/user';
 import Cookies from 'js-cookie';
+import { Button, Input } from 'antd';
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -17,20 +18,25 @@ const Header: React.FC<HeaderProps> = ({children}) => {
   const dispatch = useDispatch();
   const {user, authToken} = useSelector((state: RootState) => state.user);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>('');
 
+  const handleSearchClick = () => {
+    console.log(searchText);
+  }
   useEffect(() => {
-    if (Cookies.get('token')) {
-      const token = Cookies.get('token');
+    const token = Cookies.get('token');
       if (token) {
         const userInfo = jwtDecode(token);
-        console.log(userInfo);
-        dispatch(setUser(userInfo));
-      }
+        const userDetails = Cookies.get('user');
+        if (userDetails) {
+          dispatch(setUser({...userInfo,userDetails}));
+        } else {
+          dispatch(setUser(null));
+        }
       }else {
       dispatch(setUser(null));
     }
   }, [authToken]);
-console.log(user)
   return (
     <>
     <header className="bg-transparent shadow w-full">
@@ -62,14 +68,19 @@ console.log(user)
 
           {/* Search Section */}
           <div className="flex flex-1 border border-gray-300 overflow-hidden rounded w-full sm:w-auto">
-            <input
-              type="text"
-              className="flex-1 px-4 py-2 text-gray-700 outline-none"
-              placeholder="Search your product..."
+            <Input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="flex-1 px-4 py-2 text-gray-700 outline-none rounded-none"
+                placeholder="Search your product..."
             />
-            <button className="bg-green-500 text-white px-4 py-2 hover:bg-green-600 transition">
+              <Button
+                onClick={handleSearchClick}
+                size='large'
+                className="rounded-none bg-green-500 text-white px-4 py-2 hover:bg-green-600 transition">
               🔍
-            </button>
+            </Button>
           </div>
           <SignInModal 
             isOpen={isModalOpen} 

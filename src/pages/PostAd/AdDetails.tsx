@@ -29,7 +29,8 @@ const AdDetails = ({
   const [optionalFields, setOptionalFields] = useState({});
   const [isOn, setIsOn] = useState<boolean>(false);
   const { images } = useSelector((state: RootState) => state.image);
-  const {user} = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user);
+  const userDetails: any = user ? user.userDetails : null;
   const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setFormData((prevData) => ({
@@ -72,13 +73,13 @@ const AdDetails = ({
     const response = await postAd({
       ...formData,
       createdDate: new Date(),
-      createdBy: user?.exp,
+      createdBy: JSON.parse(userDetails).userId,
       coordinate: `${latitude},${longitude}`,
       categoryId: selectedCategory,
       groupId: selectedGroup,
       typeId: selectedType,
       photo: images.join(' '),
-    });
+    }, JSON.stringify(optionalFields));
     if(response.status === 200){
       console.log('Ad posted successfully');
     }

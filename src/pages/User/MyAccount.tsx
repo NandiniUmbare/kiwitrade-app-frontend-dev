@@ -14,6 +14,7 @@ const MyAccount: React.FC = () => {
       dispatch(setToken(null));
       dispatch(setUser(null));
       Cookies.remove('token');
+      Cookies.remove('user');
       navigate('/');
      }
   }

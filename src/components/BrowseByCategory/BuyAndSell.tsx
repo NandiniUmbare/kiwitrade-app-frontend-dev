@@ -1,7 +1,6 @@
-import { getGroup } from '@/api/data';
 import { Group } from '@/pages/PostAd/PostAd';
-import { setSelectedGroup } from '@/redux/slice/category';
-import { RootState } from '@/redux/store';
+import { getGroups, setSelectedGroup } from '@/redux/slice/category';
+import { AppDispatch, RootState } from '@/redux/store';
 import React, { useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,13 +9,12 @@ import { useNavigate } from 'react-router-dom';
 const BuyAndSell: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {selectedCategory} = useSelector((state: RootState) => state.category);
+  const appDispatch = useDispatch<AppDispatch>();
+  const {selectedCategory, groups} = useSelector((state: RootState) => state.category);
   const [selectedTab, setSelectedTab] = React.useState<number>(0);
   const [searchValue, setSearchValue] = React.useState<string>('');
-  const [groups, setGroups] = React.useState<Group[]>([{groupId: 0, groupName: 'All', categoryId: selectedCategory ?? 0}]);
   const getGroupData = async () => {
-    const response = await getGroup(selectedCategory ?? 0);
-    setGroups([...groups, ...response.data]);
+    appDispatch(getGroups(selectedCategory ?? 0));
   }
   const handleSelectTabClick = (id: number) => {
     setSelectedTab(id);
@@ -37,7 +35,7 @@ const BuyAndSell: React.FC = () => {
         <h1 className="text-4xl text-black font-bold mt-16">Buy & Sell</h1>
         <div className="mt-6 bg-white rounded-lg shadow-md flex flex-col text-black">
           <div className="p-6 flex space-x-4">
-            {groups.map((tab: Group) => (
+            {[{groupId: 0, groupName: 'All', categoryId: selectedCategory ?? 0},...groups].map((tab: Group) => (
               <button
                 key={tab.groupId}
                 onClick={() => handleSelectTabClick(tab.groupId)}

@@ -6,7 +6,7 @@ interface OptionalFieldsType {
   selectedGroup: number;
   selectedType: number;
   optionalFields: { [key: string]: string };
-  setOptionalFields: ()=>void;
+  setOptionalFields: (fields: { [key: string]: string }) => void;
 }
 interface Fields { 
   type: string;

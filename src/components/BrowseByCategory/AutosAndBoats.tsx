@@ -1,23 +1,22 @@
-import { getGroup } from '@/api/data';
-import { Group } from '@/pages/PostAd/PostAd';
-import { setSelectedGroup } from '@/redux/slice/category';
-import { RootState } from '@/redux/store';
+import { getGroups, setSelectedGroup } from '@/redux/slice/category';
+import { AppDispatch, RootState } from '@/redux/store';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const AutosAndBoats: React.FC = () => {
-  const {selectedCategory} = useSelector((state: RootState) => state.category);
+  const {selectedCategory, groups} = useSelector((state: RootState) => state.category);
   const dispatch = useDispatch();
+  const appDispatch = useDispatch<AppDispatch>();
   const [selectedGroupTab, setSelectedGroupTab] = useState<number>();
-  const [groups, setGroups] = useState<Group[]>([]);
+  // const [groups, setGroups] = useState<Group[]>([]);
   const navigate = useNavigate();
-  const getGroupData = async () => {
-    if(selectedCategory){
-      const response = await getGroup(selectedCategory);
-      setGroups(response.data);
+  const getGroupData = async() => {
+    if (selectedCategory) {
+      appDispatch(getGroups(selectedCategory));
     }
   }
+  console.log(groups);
   const imageMapping: { [key: number]: { imageUrl: string; size: string } } = [
     {
       imageUrl: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',

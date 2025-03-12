@@ -1,30 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import realEstate from '@images/realestate.jpg';
-import Header from '../Header';
-import { getType } from '@/api/data';
-import { Type } from '@/pages/PostAd/PostAd';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setSelectedGroup } from '@/redux/slice/category';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTypes, setSelectedGroup } from '@/redux/slice/category';
+import { AppDispatch, RootState } from '@/redux/store';
 
-const RealEstate = () => {
+const RealEstate: React.FC = () => {
   const dispatch = useDispatch();
+  const appDispatch = useDispatch<AppDispatch>();
+  const {selectedCategory, types} = useSelector((state: RootState) => state.category);
   const [selectedTab, setSelectedTab] = useState<number>(1);
   const groups = [{id:1, groupName:'buy'},{id:2, groupName:'rent'},{id:4, groupName:'share'}];
-  const [type, setType] = useState<Type[]>([]);
   const navigate = useNavigate();
-
-  const getTypeData = async () => {
-    const response = await getType(selectedTab, 1);
-    setType(response.data);
-  }
 
   const handleClick = (id:number) => {
     setSelectedTab(id);
     dispatch(setSelectedGroup(id));
   }
   useEffect(() => {
-    getTypeData();
+    appDispatch(getTypes({categoryId: selectedCategory ?? 0, groupId: selectedTab})); 
   },[selectedTab]);
   useEffect(()=>{
     dispatch(setSelectedGroup(selectedTab));
@@ -52,7 +46,7 @@ const RealEstate = () => {
           <div className="px-4 py-4 rounded-md shadow-md">
             <select id='type' onChange={(e)=>navigate(`/real-estate/${e.target.value}`)} className="w-full outline-none bg-gray-200 text-black px-4 py-2 rounded-md shadow-md ">
               <option value="">Type</option>
-              {type && type.map((t) => (
+              {types && types.map((t) => (
                 <option key={t.typeId} value={t.typeId}>{t.typeName}</option>
               ))}
             </select>

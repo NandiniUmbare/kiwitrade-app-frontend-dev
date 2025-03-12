@@ -2,27 +2,9 @@ import { FormDataType } from "@/pages/PostAd/PostAd";
 import { axiosInstance } from "./index";
 import axios from "axios";
 
-export const getGroup = async(categoryId: number) => {
-    try {
-        const response = await axiosInstance.get(`/api/Lookup/group?categoryId=${categoryId}`);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export const getType = async( groupId:number,categoryId: number,) => {
-    try {
-        const response = await axiosInstance.get(`/api/Lookup/type?groupId=${groupId}&categoryId=${categoryId}`);
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
 export const getDistrict = async() => {
     try {
-        const response = await axiosInstance.get('/api/Lookup/district');
+        const response = await axiosInstance.get('https://api.ekiwitrade.com/api/Lookup/district');
         return response.data;
     } catch (error) {
         console.log(error);
@@ -31,7 +13,7 @@ export const getDistrict = async() => {
 
 export const getCity = async(distId: number) => {
     try {
-        const response = await axiosInstance.get(`/api/Lookup/city?districtId=${distId}`);
+        const response = await axiosInstance.get(`https://api.ekiwitrade.com/api/Lookup/city?districtId=${distId}`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -40,7 +22,7 @@ export const getCity = async(distId: number) => {
 
 export const getSuburb = async(cityId:number, distId: number) => {
     try {
-        const response = await axiosInstance.get(`/api/Lookup/suburb?cityId=${cityId}&districtId=${distId}`);
+        const response = await axiosInstance.get(`https://api.ekiwitrade.com/api/Lookup/suburb?cityId=${cityId}&districtId=${distId}`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -68,9 +50,9 @@ export const uploadImage = async(file: FormData, onUploadProgress: (progressEven
     }
 }
 
-export const postAd = async(data: FormDataType) => {
+export const postAd = async(data: FormDataType, optionalData: string) => {
     try {
-        const response = await axiosInstance.post('https://api.ekiwitrade.com/UpsertProduct', data);
+        const response = await axiosInstance.post(`https://api.ekiwitrade.com/UpsertProduct?optionalData=${optionalData}`, data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -80,10 +62,10 @@ export const postAd = async(data: FormDataType) => {
 export const getPostBrowseByCategory = async(categoryId: number, groupId:number, typeId: number) => {
     try {
         if(typeId === 0){
-            const response = await axiosInstance.get(`/GetProductByCatGroupType?categoryId=${categoryId}&groupId=${groupId}`);
+            const response = await axiosInstance.get(`https://api.ekiwitrade.com/GetProductByCatGroupType?categoryId=${categoryId}&groupId=${groupId}`);
             return response.data;
         } else {
-            const response = await axiosInstance.get(`/GetProductByCatGroupType?categoryId=${categoryId}&groupId=${groupId}&TypeId=${typeId}`);
+            const response = await axiosInstance.get(`https://api.ekiwitrade.com/GetProductByCatGroupType?categoryId=${categoryId}&groupId=${groupId}&TypeId=${typeId}`);
             return response.data;
         }
     } catch (error) {
@@ -93,7 +75,7 @@ export const getPostBrowseByCategory = async(categoryId: number, groupId:number,
 
 export const registerUser = async (data: FormDataProps) => {
     try {
-        const response = await axiosInstance.post('/api/Users/register', data);
+        const response = await axiosInstance.post('https://api.ekiwitrade.com/api/Users/register', data);
         return response;
     } catch (error: any) {
         return error.response;
@@ -102,7 +84,7 @@ export const registerUser = async (data: FormDataProps) => {
 
 export const loginUser = async(data: {email: string, password: string}) => {
     try {
-        const response = await axiosInstance.post('/api/Users/login',data);
+        const response = await axiosInstance.post('https://api.ekiwitrade.com/api/Users/login',data);
         return response.data;
     } catch (error:any) {
         if(error.status === 403){
@@ -114,7 +96,7 @@ export const loginUser = async(data: {email: string, password: string}) => {
 
 export const userGoogleLogin = async(data: {email: string}) => {
     try {
-        const response = await axiosInstance.post('/api/Users/google-login', data);
+        const response = await axiosInstance.post('https://api.ekiwitrade.com/api/Users/google-login', data);
         return response.data;
     } catch (error: any) {
         return error.response.data;

@@ -1,7 +1,7 @@
 import { getPostBrowseByCategory } from '@/api/data';
 import { RootState } from '@/redux/store';
 import React, { useEffect, useRef, useState } from 'react';
-import { FaAngleDown, FaArrowDown, FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
+import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Button, Checkbox, Input, List, Radio } from 'antd';
@@ -14,6 +14,7 @@ export interface PostType {
 
 const PostListing: React.FC = () => {
   const [sectionFilter, setSectionFilter] = useState<boolean>(false);
+  const [selectedGroupTab, setSelectedGroupTab] = useState<number>(1);
   const [view, setView] = useState<'map' | 'list'>('list');
   const filterButtonRef = useRef<HTMLButtonElement>(null);
   const { category } = useParams<{ category: string }>();
@@ -26,7 +27,7 @@ const PostListing: React.FC = () => {
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
   const sectionFilterRef = useRef<HTMLButtonElement>(null);
 
-  const {selectedCategory, selectedGroup} = useSelector((state: RootState) => state.category);
+  const {selectedCategory, selectedGroup, groups} = useSelector((state: RootState) => state.category);
   const [posts, setPosts] = useState<PostType[]>([]);
   const params = useParams();
   const getPosts = async () => {
@@ -37,7 +38,6 @@ const PostListing: React.FC = () => {
       setPosts(response.data);
     }
   }
-
   const listings = [
     {
       type: 'Condos',
@@ -99,19 +99,19 @@ const PostListing: React.FC = () => {
             className="absolute top-full left-0 mt-2 p-4 border rounded-lg bg-white shadow-md z-10"
           >
             <div className="flex flex-col gap-4">
-              <Radio.Group defaultValue="sale" buttonStyle="solid">
-                <Radio.Button value="sale">For Sale</Radio.Button>
-                <Radio.Button value="rent">For Rent</Radio.Button>
-                <Radio.Button value="shared">Shared</Radio.Button>
+              <Radio.Group onChange={(e)=>(setSelectedGroupTab(Number(e.target.value)))}  defaultValue="1" buttonStyle="solid">
+                <Radio.Button value="1">For Sale</Radio.Button>
+                <Radio.Button value="2">For Rent</Radio.Button>
+                <Radio.Button value="3">Shared</Radio.Button>
               </Radio.Group>
-              <Button className="mt-2" type="primary">
+              <Button onClick={() =>{}} className="mt-2" type="primary">
                 Filter
               </Button>
             </div>
           </div>
         )}
         {(category === 'autos-and-boats' ||
-          category === 'buy-sell' ||
+          category === 'buy-and-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
           category === 'community-events') && (
@@ -137,11 +137,8 @@ const PostListing: React.FC = () => {
               <h5 className="text-left font-bold">Section</h5>
               <Radio.Group
                 className="flex flex-col gap-3"
-                options={[
-                  { value: 1, label: 'Option A' },
-                  { value: 2, label: 'Option B' },
-                  { value: 3, label: 'Option C' },
-                ]}
+                options={[{ label: 'All', value: 0 }, ...groups.map((group) => ({ label: group.groupName, value: group.groupId }))]}
+                onChange={(e) => console.log(e.target.value)}
               />
               <Button className="mt-2" type="primary">
                 Switch
@@ -186,7 +183,7 @@ const PostListing: React.FC = () => {
         </div>
         )}
         {(category === 'autos-and-boats' ||
-          category === 'buy-sell' ||
+          category === 'buy-and-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
           category === 'community-events') && (

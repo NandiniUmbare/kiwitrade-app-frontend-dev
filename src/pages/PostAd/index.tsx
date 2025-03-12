@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { CgAdd } from 'react-icons/cg';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCategories } from '@/redux/slice/category';
+import { getCategories, getGroups, getTypes } from '@/redux/slice/category';
 import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers, FaLeaf } from 'react-icons/fa';
 import { AppDispatch, RootState } from '@/redux/store';
-import { Group, Type } from './PostAd';
-import { getGroup, getType } from '@/api/data';
 import AdDetails from './AdDetails';
-import OptionalFields from './OptionalFields';
 
 
 const PostAd: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { loading, categories, error } = useSelector((state: RootState) => state.category);
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [type, setType] = useState<Type[]>([]);
+  const { loading, categories, groups, types, error } = useSelector((state: RootState) => state.category);
   const [selectedCategory, setSelectedCategory] = useState<number>();
   const [selectedType, setSelectedType] = useState<number>();
   const [selectedGroup, setSelectedGroup] = useState<number>();
@@ -34,21 +29,11 @@ const PostAd: React.FC = () => {
       return true;
     } else if (groups && !selectedGroup) {
       return true;
-    } else if (type && !selectedType) {
+    } else if (types && !selectedType) {
       return true;
     } else {
       return false;
     }
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getGroupData = async () => {
-    const response = await getGroup(selectedCategory ?? 0);
-    setGroups(response.data);
-  };
-  const getTypeData = async () => {
-    const response = await getType(selectedGroup ?? 0, selectedCategory ?? 0);
-    setType(response.data);
   };
 
   useEffect(() => {
@@ -56,11 +41,11 @@ const PostAd: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    getGroupData();
+    dispatch(getGroups(selectedCategory ?? 0));
   }, [selectedCategory]);
 
   useEffect(() => {
-    getTypeData();
+    dispatch(getTypes({ categoryId: selectedCategory ?? 0, groupId: selectedGroup ?? 0 }));
   }, [selectedCategory, selectedGroup]);
 
   useEffect(() => {
@@ -109,7 +94,7 @@ const PostAd: React.FC = () => {
           <div>
             <h3 className="text-left text-2xl items-center">Select a Type</h3>
             <div className="mt-2 mb-6 flex flex-wrap w-full text-center">
-              {type && type.map((data) => (
+              {types && types.map((data) => (
                 <div
                   key={data.typeId}
                   onClick={() => setSelectedType(data.typeId)}
@@ -134,11 +119,11 @@ const PostAd: React.FC = () => {
         <div>
           <AdDetails
             categories={categories}
-            selectedCategory={selectedCategory}
+            selectedCategory={selectedCategory ?? 0}
             groups={groups}
-            selectedGroup={selectedGroup}
-            typeData={type}
-            selectedType={selectedType}
+            selectedGroup={selectedGroup ?? 0}
+            typeData={types}
+            selectedType={selectedType ?? 0}
             setNext={setNext}
           />
         </div>
