@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AdDetailsTypes, CityType, DistrictType, FormDataType, SuburbType, Type } from './PostAd'
+import { AdDetailsTypes, CityType, DistrictType, FormDataType, PostErrorsType, SuburbType, Type } from './PostAd'
 import { FaEdit } from 'react-icons/fa'
 import {MdPhotoLibrary } from 'react-icons/md';
 import { getCity, getDistrict, getSuburb, postAd } from '@/api/data';
@@ -9,6 +9,7 @@ import ImageUpload from '@/components/ImageUpload';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import OptionalFields from './OptionalFields';
+import { validateForm } from '@/helper/validation';
 
 const AdDetails = ({
   categories,
@@ -22,10 +23,17 @@ const AdDetails = ({
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<PostErrorsType>({});
   const [district, setDistrict] = useState<DistrictType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
   const [suburb, setSuburb] = useState<SuburbType[]>([]);
-  const [formData, setFormData] = useState<FormDataType>({} as FormDataType);
+  const [formData, setFormData] = useState<FormDataType>({
+    title: "",
+    districtId: "",
+    cityId: "",
+    suburbId: "",
+    description: "",
+  } as unknown as FormDataType);
   const [optionalFields, setOptionalFields] = useState({});
   const [isOn, setIsOn] = useState<boolean>(false);
   const { images } = useSelector((state: RootState) => state.image);
@@ -37,8 +45,11 @@ const AdDetails = ({
       ...prevData,
       [id]: value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [id]: "",
+    }));
   };
-  console.log('optionalFields', optionalFields);
   const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -69,6 +80,14 @@ const AdDetails = ({
   };
   const handleSave = async() => {
     // console.log(formData);
+    const errors = validateForm(formData);
+    if(Object.keys(errors).length > 0){
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...errors,
+      }));
+      return;
+    }
     console.log('latitude', latitude, 'longitude', longitude)
     const response = await postAd({
       ...formData,
@@ -120,6 +139,7 @@ const AdDetails = ({
                 id="title"
                 className="border border-gray-300 rounded-md p-3 mt-6 w-[100%] focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
+              {errors.title && <p className="text-left text-red-500 text-xs">{errors.title}</p>}
             </div>
             <div className="relative w-full">
               <label
@@ -141,6 +161,7 @@ const AdDetails = ({
                   </option>
                 ))}
               </select>
+              {errors.districtId && <p className="text-left text-red-500 text-xs">{errors.districtId}</p>}
             </div>
             <div className="relative w-full">
               <label
@@ -162,6 +183,7 @@ const AdDetails = ({
                   </option>
                 ))}
               </select>
+              {errors.cityId && <p className="text-left text-red-500 text-xs">{errors.cityId}</p>}
             </div>
             <div className="relative w-full">
               <label
@@ -183,6 +205,7 @@ const AdDetails = ({
                   </option>
                 ))}
               </select>
+              {errors.suburbId && <p className="text-left text-red-500 text-xs">{errors.suburbId}</p>}
             </div>
             <div className="flex w-full">
               {!isOn && (
@@ -252,10 +275,20 @@ const AdDetails = ({
               <h3 className="text-md text-left">Discription</h3>
               <ReactQuill
                 value={formData.description}
-                onChange={(value) => setFormData((prevData) => ({ ...prevData, description: value }))}
+                onChange={(value) => {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    description: value,
+                  }));
+                  setErrors((prevErrors) => ({
+                    ...prevErrors,
+                    description: "",
+                  }));
+                }}
                 theme="snow"
                 className="border border-gray-300 shadow-sm"
               />
+              {errors.description && <p className="text-left text-red-500 text-xs">{errors.description}</p>}
             </div>
             <hr />
           </div>

@@ -114,7 +114,7 @@ const PostListing: React.FC = () => {
           category === 'buy-and-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
-          category === 'community-events') && (
+          category === 'community-and-events') && (
           <Button
             variant="outlined"
             size="large"
@@ -150,7 +150,7 @@ const PostListing: React.FC = () => {
         category === 'buy-sell' ||
         category === 'jobs' ||
         category === 'services-specials' ||
-        category === 'community-events') && (
+        category === 'community-and-events') && (
         <Button
           variant="outlined"
           size="large"
@@ -186,7 +186,7 @@ const PostListing: React.FC = () => {
           category === 'buy-and-sell' ||
           category === 'jobs' ||
           category === 'services-specials' ||
-          category === 'community-events') && (
+          category === 'community-and-events') && (
           <Button
               variant="outlined"
               size="large"

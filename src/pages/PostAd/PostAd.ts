@@ -33,7 +33,14 @@ export interface FormDataType {
     districtId: number;
     cityId: number;
     suburbId: number;
-    price:number;
+    createdDate: Date;
+    createdBy: number;
+    coordinate: string;
+    categoryId: number;
+    groupId: number;
+    typeId: number;
+    photo: string;
+    price?:number;
     noPrice?: string;
     description: string;
 }
@@ -49,4 +56,12 @@ export interface SuburbType {
     cityId: number;
     distId: number;
     suburbName: string;
+}
+
+export interface PostErrorsType { 
+    title: string;
+    districtId: string;
+    cityId: string;
+    suburbId: string;
+    description: string;
 }
