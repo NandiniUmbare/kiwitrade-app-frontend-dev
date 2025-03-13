@@ -7,7 +7,7 @@ const MapListing: React.FC = () => {
     { id: 2, lat: 19.2190, lng: 73.0870, postId: "/post/2" },
     ];
   return (
-    <LoadScript googleMapsApiKey="AIzaSyA5pBCmPyknIpf_M5_Rn9eX9y5AwjFT4ro">
+    <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_API_KEY || ''}>
           <GoogleMap
               mapContainerStyle={{ width: "100%", height: "100%" }}
               center={{ lat: 19.2183, lng: 73.0860 }}

@@ -135,7 +135,7 @@ const ImageUpload: React.FC = () => {
         </p>
       </div>
       <div className="mt-4 grid grid-cols-3 gap-4">
-        {images.map((image, index) => (
+        {displayImages.map((image, index) => (
           <div
             draggable
             onDragStart={() => (dragImage.current = index)}

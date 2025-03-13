@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import OptionalFields from './OptionalFields';
 import { validateForm } from '@/helper/validation';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 const AdDetails = ({
   categories,
@@ -20,13 +21,11 @@ const AdDetails = ({
   selectedType,
   setNext
 }: AdDetailsTypes) => {
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<PostErrorsType>({});
   const [district, setDistrict] = useState<DistrictType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
   const [suburb, setSuburb] = useState<SuburbType[]>([]);
+  const [marker, setMarker] = useState<{ lat: number; lng: number } | null>(null);
   const [formData, setFormData] = useState<FormDataType>({
     title: "",
     districtId: "",
@@ -50,22 +49,6 @@ const AdDetails = ({
       [id]: "",
     }));
   };
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position: GeolocationPosition) => {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-        },
-        (err: GeolocationPositionError) => {
-          setError(err.message);
-        }
-      );
-    } else {
-      setError("Geolocation is not supported by this browser.");
-    }
-  };
-  
   const getDistrictData = async () => {
     const response = await getDistrict();
     setDistrict(response.data);
@@ -88,12 +71,11 @@ const AdDetails = ({
       }));
       return;
     }
-    console.log('latitude', latitude, 'longitude', longitude)
     const response = await postAd({
       ...formData,
       createdDate: new Date(),
       createdBy: JSON.parse(userDetails).userId,
-      coordinate: `${latitude},${longitude}`,
+      coordinate: `${marker?.lat},${marker?.lng}`,
       categoryId: selectedCategory,
       groupId: selectedGroup,
       typeId: selectedType,
@@ -104,7 +86,6 @@ const AdDetails = ({
     }
   };
   useEffect(() => {
-    getLocation();
     getDistrictData();
   }, []);
   useEffect(() => {
@@ -305,6 +286,20 @@ const AdDetails = ({
             <div className="w-full">
               <ImageUpload />
             </div>
+          </div>
+          <div className='w-full h-[400px] mt-6'>
+            <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_API_KEY || ''}>
+              <GoogleMap
+                mapContainerStyle={{ width: "100%", height: "100%" }}
+                center={{ lat: 19.2183, lng: 73.0869 }}
+                zoom={10}
+                onClick={(e) => { e.latLng &&
+                  setMarker({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+                }}
+              >
+                 {marker && <Marker position={marker} />}
+                </GoogleMap>
+            </LoadScript>
           </div>
         </div>
       </div>
