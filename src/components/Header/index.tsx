@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SignInModal from './SignInModal';
 import SignIn from '../../pages/User/SignIn';
 import { RootState } from '@/redux/store';
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { setUser } from '@/redux/slice/user';
 import Cookies from 'js-cookie';
-import { Button, Input } from 'antd';
+import { Button, Input, Modal } from 'antd';
 
 interface HeaderProps {
   children: React.ReactNode;
@@ -18,10 +18,11 @@ const Header: React.FC<HeaderProps> = ({children}) => {
   const dispatch = useDispatch();
   const {user, authToken} = useSelector((state: RootState) => state.user);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [openPostModal, setOpenPostModal] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>('');
 
   const handleSearchClick = () => {
-    console.log(searchText);
+    navigate(`/0/0/?search=${searchText}`);
   }
   useEffect(() => {
     const token = Cookies.get('token');
@@ -89,11 +90,20 @@ const Header: React.FC<HeaderProps> = ({children}) => {
           </SignInModal>
           {/* My Account Section (Desktop only) */}
           <button
-              onClick={() => user && navigate('/post-add')}
+              onClick={() => !user? setOpenPostModal(true): navigate('/post-add')}
               className="px-4 py-2 text-black border border-black rounded-full hover:bg-black hover:text-white transition"
             >
               POST Ad
             </button>
+            <Modal open={openPostModal}
+              onOk={() => setOpenPostModal(false)}
+              onCancel={() => setOpenPostModal(false)}
+              cancelButtonProps={{ style: { display: "none" } }}>
+              <h1>You cannot post without login...</h1>
+              <h3>Please login 
+                <Link className='text-blue-400' to='/user/login/page'> here</Link>..
+              </h3>
+            </Modal>
           <div className="hidden sm:block">
             {
               user ? (

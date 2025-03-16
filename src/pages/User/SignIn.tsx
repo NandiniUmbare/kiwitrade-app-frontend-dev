@@ -33,7 +33,6 @@ const SignIn: React.FC<SignInProps> = ({ onClose }) => {
           email: formData.email,
           password:formData.password
         });
-        console.log(response);
         if(response.statusCode === 200){
           Cookies.set('token', response.token, { expires: 1 });
           Cookies.set('user', JSON.stringify(response.userDetails), { expires: 1 });

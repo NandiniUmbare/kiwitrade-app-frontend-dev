@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import categoryReducer from '../redux/slice/category';
 import imageReducer from '../redux/slice/images';
 import userReducer from '../redux/slice/user';
+import postReducer from '../redux/slice/posts';
 
 const store = configureStore({
     reducer: {
         category: categoryReducer,
         image: imageReducer,
-        user: userReducer
+        user: userReducer,
+        posts: postReducer
     }
 })
 

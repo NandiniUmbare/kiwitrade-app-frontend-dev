@@ -5,10 +5,13 @@ import { getCategories, getGroups, getTypes } from '@/redux/slice/category';
 import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers, FaLeaf } from 'react-icons/fa';
 import { AppDispatch, RootState } from '@/redux/store';
 import AdDetails from './AdDetails';
+import { useNavigate } from 'react-router-dom';
 
 
 const PostAd: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
   const { loading, categories, groups, types, error } = useSelector((state: RootState) => state.category);
   const [selectedCategory, setSelectedCategory] = useState<number>();
   const [selectedType, setSelectedType] = useState<number>();
@@ -36,6 +39,11 @@ const PostAd: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user) {
+      navigate('/user/login/page');
+    }
+  }, []);
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
@@ -68,7 +76,7 @@ const PostAd: React.FC = () => {
               <div
                 key={category.categoryId}
                 onClick={() => setSelectedCategory(category.categoryId)}
-                className={`border rounded-lg cursor-pointer text-sm w-[30%] m-2 p-4 flex ${selectedCategory === category.categoryId ? 'bg-blue-600 text-white border-blue-600' : 'text-sky-700'}`}
+                className={`border rounded-lg cursor-pointer text-sm w-[30%] m-2 p-4 flex items-center text-xl ${selectedCategory === category.categoryId ? 'bg-blue-600 text-white border-blue-600' : 'text-sky-700'}`}
               >
                 <h4 className="pr-4">{iconsMap[category.categoryId]}</h4>
                 <h3 className="text-xl">{category.categoryName}</h3>

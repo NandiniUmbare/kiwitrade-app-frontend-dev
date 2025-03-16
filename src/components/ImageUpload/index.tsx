@@ -43,9 +43,9 @@ const ImageUpload: React.FC = () => {
   }
 
   const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: File[]) => {
+    (acceptedFiles: File[], fileRejections: FileRejection[]) => {
       const validFiles: File[] = [];
-      const invalidFiles: string[] = [];
+      const invalidFiles: string[] = fileRejections.map(rejection => rejection.file.name);
       acceptedFiles.forEach((file) => {
         const isValidFormat = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type);
         const isValidSize = file.size < 6 * 1024 * 1024; // 6MB

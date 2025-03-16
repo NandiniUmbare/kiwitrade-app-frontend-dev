@@ -1,10 +1,11 @@
 import { getPostBrowseByCategory } from '@/api/data';
-import { RootState } from '@/redux/store';
+import { AppDispatch, RootState } from '@/redux/store';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { Button, Checkbox, Input, List, Radio } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPosts } from '@/redux/slice/posts';
+import { useLocation, useParams } from 'react-router-dom';
+import { Button, Checkbox, List, Radio } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 import MapListing from './MapListing';
@@ -27,17 +28,23 @@ const PostListing: React.FC = () => {
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
   const sectionFilterRef = useRef<HTMLButtonElement>(null);
 
-  const {selectedCategory, selectedGroup, groups} = useSelector((state: RootState) => state.category);
-  const [posts, setPosts] = useState<PostType[]>([]);
+  const { selectedCategory, selectedGroup, groups } = useSelector((state: RootState) => state.category);
+  const {posts} = useSelector((state: RootState) => state.posts);
+  // const [posts, setPosts] = useState<PostType[]>([]);
   const params = useParams();
-  const getPosts = async () => {
-    // Fetch posts based on selectedCategory and selectedGroup
-    if (selectedCategory !== null && selectedGroup !== null) {
-      const response = await getPostBrowseByCategory(selectedCategory, selectedGroup, Number(params.type));
-      console.log(response);
-      setPosts(response.data);
-    }
-  }
+  const location = useLocation();
+  const appDispatch = useDispatch<AppDispatch>();
+  const queryParams = new URLSearchParams(location.search);
+  const search = queryParams.get("search");
+  
+  // const getPosts = async () => {
+  //   // Fetch posts based on selectedCategory and selectedGroup
+  //   if (selectedCategory !== null && selectedGroup !== null) {
+  //     const response = await getPostBrowseByCategory(selectedCategory, selectedGroup, Number(params.type));
+  //     console.log(response);
+  //     setPosts(response.data);
+  //   }
+  // }
   const listings = [
     {
       type: 'Condos',
@@ -70,8 +77,10 @@ const PostListing: React.FC = () => {
   ];
   useEffect(() => {
     // console.log(selectedCategory, selectedGroup,params.type);
-    getPosts();
+    // getPosts();
+    appDispatch(getPosts());
   }, []);
+
   console.log(posts);
   return (
     <div>
@@ -273,17 +282,17 @@ const PostListing: React.FC = () => {
         </div>
         {view === 'list' ? (
           <div className="w-[100%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {listings.map((listing, index) => (
+          {posts.map((post, index) => (
             <div key={index} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
               <div className="lg:h-[14%] md:h-[8%] w-[16%] lg:text-[26px] text-[20px] flex flex-col items-center justify-center m-2 rounded-full absolute top-0 right-0 bg-gray-200 opacity-30">
                 <FaHeart />
               </div>
-              <img src={listing.image} alt={listing.type} className="w-full h-40 object-cover" />
+              <img src={post.photo} alt={post.typeId.toString()} className="w-full h-40 object-cover" />
               <div className="p-4">
-                <h3 className="text-lg font-semibold">{listing.type}</h3>
-                <p className="text-xl font-bold text-blue-600">{listing.price}</p>
-                <p className="text-gray-600">{listing.description}</p>
-                <p className="text-sm text-gray-500">📍 {listing.location}</p>
+                <h3 className="text-lg font-semibold">{post.typeId}</h3>
+                <p className="text-xl font-bold text-blue-600">{post.price}</p>
+                <p className="text-gray-600">{post.description}</p>
+                <p className="text-sm text-gray-500">📍 {post.suburbId}</p>
               </div>
             </div>
           ))}

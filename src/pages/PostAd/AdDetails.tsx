@@ -11,6 +11,8 @@ import { RootState } from '@/redux/store';
 import OptionalFields from './OptionalFields';
 import { validateForm } from '@/helper/validation';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { Button } from 'antd';
+import axios from 'axios';
 
 const AdDetails = ({
   categories,
@@ -26,6 +28,7 @@ const AdDetails = ({
   const [cities, setCities] = useState<CityType[]>([]);
   const [suburb, setSuburb] = useState<SuburbType[]>([]);
   const [marker, setMarker] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 52.9257201, lng: -1.475632 });
   const [formData, setFormData] = useState<FormDataType>({
     title: "",
     districtId: "",
@@ -62,7 +65,6 @@ const AdDetails = ({
     setSuburb(response.data);
   };
   const handleSave = async() => {
-    // console.log(formData);
     const errors = validateForm(formData);
     if(Object.keys(errors).length > 0){
       setErrors((prevErrors) => ({
@@ -71,6 +73,7 @@ const AdDetails = ({
       }));
       return;
     }
+    const strigifyJson = JSON.stringify(optionalFields);
     const response = await postAd({
       ...formData,
       createdDate: new Date(),
@@ -80,18 +83,39 @@ const AdDetails = ({
       groupId: selectedGroup,
       typeId: selectedType,
       photo: images.join(' '),
-    }, JSON.stringify(optionalFields));
+    }, `"${strigifyJson.replace(/"/g, '\\"')}"`);
     if(response.status === 200){
       console.log('Ad posted successfully');
     }
   };
+  const getCityCoordinates = async () => {
+    const suburbName: string | undefined = suburb.find((s: SuburbType) => s.suburbId == formData.suburbId)?.suburbName;
+    if (suburbName) {
+      const apiUrl = `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(
+        suburbName
+      )}&format=json`;
+      try {
+      const response = await axios.get(apiUrl);
+      if (response.data.length > 0) {
+        setMapCenter({
+          lat: parseFloat(response.data[0].lat),
+          lng: parseFloat(response.data[0].lon),
+        });
+      }
+    } catch (error: any) {
+      throw new Error(error);
+    }
+    }
+  }
+  console.log(marker);
   useEffect(() => {
     getDistrictData();
   }, []);
   useEffect(() => {
     getCityData();
     getSuburbData();
-  }, [formData]);
+    getCityCoordinates();
+  }, [formData.districtId, formData.cityId, formData.suburbId]);
   return (
     <div className="p-6 bg-white border border-gray-400 rounded-md">
       <div className="flex justify-between">
@@ -252,7 +276,7 @@ const AdDetails = ({
                 </div>
               )}
             </div>
-            <div className="flex flex-col w-full pt-4 mb-6">
+            <div className="flex flex-col w-full h-[300px] pt-4 mb-6">
               <h3 className="text-md text-left">Discription</h3>
               <ReactQuill
                 value={formData.description}
@@ -267,7 +291,7 @@ const AdDetails = ({
                   }));
                 }}
                 theme="snow"
-                className="border border-gray-300 shadow-sm"
+                className="border border-gray-300 shadow-sm h-[300px]"
               />
               {errors.description && <p className="text-left text-red-500 text-xs">{errors.description}</p>}
             </div>
@@ -288,10 +312,11 @@ const AdDetails = ({
             </div>
           </div>
           <div className='w-full h-[400px] mt-6'>
+            <h3 className="text-md font-semibold text-left mb-2">Select Location</h3>
             <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_API_KEY || ''}>
               <GoogleMap
                 mapContainerStyle={{ width: "100%", height: "100%" }}
-                center={{ lat: 19.2183, lng: 73.0869 }}
+                center={mapCenter}
                 zoom={10}
                 onClick={(e) => { e.latLng &&
                   setMarker({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -312,10 +337,11 @@ const AdDetails = ({
           setOptionalFields={setOptionalFields}
         />
       </div>
+      <hr className='my-12'/>
       <div className="flex justify-end">
-        <button onClick={handleSave} className={`text-2xl text-white p-3 rounded-lg bg-green-500`}>
+        <Button size='large' onClick={handleSave} className={`text-2xl text-white px-6 py-4 rounded-lg bg-green-500`}>
           Save
-        </button>
+        </Button>
       </div>
     </div>
   );
