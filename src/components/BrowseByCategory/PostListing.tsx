@@ -1,17 +1,15 @@
-import { getPostBrowseByCategory } from '@/api/data';
 import { AppDispatch, RootState } from '@/redux/store';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from '@/redux/slice/posts';
 import { useLocation, useParams } from 'react-router-dom';
-import { Button, Checkbox, List, Modal, Radio, Slider } from 'antd';
+import { Button, Carousel, Checkbox, List, Modal, Radio } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 import MapListing from './MapListing';
-export interface PostType {
-  postId: number;
-}
+import { getGroups, getTypes } from '@/redux/slice/category';
+import { getDistricts, getSuburbs } from '@/redux/slice/location';
 
 const PostListing: React.FC = () => {
   const [sectionFilter, setSectionFilter] = useState<boolean>(false);
@@ -29,60 +27,21 @@ const PostListing: React.FC = () => {
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
   const sectionFilterRef = useRef<HTMLButtonElement>(null);
 
-  const { selectedCategory, selectedGroup, groups } = useSelector((state: RootState) => state.category);
+  const { selectedCategory, selectedGroup, groups, types } = useSelector((state: RootState) => state.category);
+  const { suburbs } = useSelector((state: RootState) => state.location);
   const {posts} = useSelector((state: RootState) => state.posts);
   // const [posts, setPosts] = useState<PostType[]>([]);
-  const params = useParams();
   const location = useLocation();
   const appDispatch = useDispatch<AppDispatch>();
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search");
-  
-  // const getPosts = async () => {
-  //   // Fetch posts based on selectedCategory and selectedGroup
-  //   if (selectedCategory !== null && selectedGroup !== null) {
-  //     const response = await getPostBrowseByCategory(selectedCategory, selectedGroup, Number(params.type));
-  //     console.log(response);
-  //     setPosts(response.data);
-  //   }
-  // }
-  // const listings = [
-  //   {
-  //     type: 'Condos',
-  //     price: 'Price Upon Request',
-  //     description: 'My home general maintenance big or small',
-  //     location: 'Seven Mile Beach Corridor',
-  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-  //   },
-  //   {
-  //     type: 'Houses',
-  //     price: 'CI$ 799,900',
-  //     description: 'Invest Smart! Secure Steady Rental Income! Cayman Brac!',
-  //     location: 'Cayman Brac',
-  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-  //   },
-  //   {
-  //     type: 'Condos',
-  //     price: 'CI$ 410,000',
-  //     description: 'Secure Your Slice of Urban Elegance',
-  //     location: 'George Town',
-  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-  //   },
-  //   {
-  //     type: 'Houses',
-  //     price: 'CI$ 2,800,000',
-  //     description: 'CENTURY 21 | ROYAL PALM ESTATES',
-  //     location: 'Savannah / Newlands',
-  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-  //   },
-  // ];
-  useEffect(() => {
-    // console.log(selectedCategory, selectedGroup,params.type);
-    // getPosts();
-    appDispatch(getPosts());
-  }, []);
 
-  console.log(posts);
+  useEffect(() => {
+    appDispatch(getPosts());
+    appDispatch(getGroups(0));
+    appDispatch(getTypes({ categoryId: 0, groupId: 0 }));
+    appDispatch(getSuburbs({ cityId: 0, districtId: 0 }));
+  }, []);
   return (
     <div>
       <div className="flex items-center gap-2 mb-6 px-14 py-4">
@@ -285,21 +244,22 @@ const PostListing: React.FC = () => {
           <div className="w-[100%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {posts.map((post, index) => {
               const images = post.photo.split(',');
-              return <div key={index} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
+              const type = types.find((type) => type.typeId == post?.typeId);
+              return <div key={post?.productId} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="lg:h-[14%] md:h-[8%] w-[16%] lg:text-[26px] text-[20px] flex flex-col items-center justify-center m-2 rounded-full absolute top-0 right-0 bg-gray-200 opacity-30">
                   <FaHeart />
                 </div>
                 <img
                   src={images[0]}
-                  alt={post.typeId.toString()}
-                  className="w-full h-40 object-cover"
-                  onClick={() => { }}
+                  alt={type?.typeName}
+                  className="w-full h-40 object-cover cursor-pointer"
+                  onClick={() => setIsCouraselVisible(true)}
                 />
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold">{post.typeId}</h3>
+                  <h3 className="text-lg font-semibold">{type?.typeName}</h3>
                   <p className="text-xl font-bold text-blue-600">{post.price}</p>
                   <p className="text-gray-600">{post.description}</p>
-                  <p className="text-sm text-gray-500">📍 {post.suburbId}</p>
+                  <p className="text-sm text-gray-500">📍 {suburbs.find((suburb)=>suburb.suburbId == post.suburbId)?.suburbName}</p>
                 </div>
                 <Modal
                   title="Image Carousel"
@@ -308,19 +268,13 @@ const PostListing: React.FC = () => {
                   footer={null}
                   width={800}
                 >
-                  <Slider {...{
-                    dots: true,
-                    infinite: true,
-                    speed: 500,
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                  }}>
-                    {images.map((image, index) => (
-                      <div key={index}>
-                        <img src={image} alt={`Slide ${index}`} style={{ width: "100%" }} />
-                      </div>
-                    ))}
-                  </Slider>
+                    <Carousel autoplay>
+                      {images.map((image, index) => (
+                        <div key={index}>
+                          <img src={image} alt={image} className="w-full h-auto" />
+                        </div>
+                      ))}
+                    </Carousel>
                 </Modal>
               </div>
             })}

@@ -29,10 +29,11 @@ export const getPosts = createAsyncThunk<Post[]>(
     'data/getPosts', // Name of the action
     async () => {
         try {
-            const response = await axiosInstance.get('https://api.ekiwitrade.com/GlobalSearch');
+            const response = await axiosInstance.get('https://api.ekiwitrade.com/GetProductByCatGroupType');
+            console.log(response);
             return response.data as Post[];
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
+            return error.response.data;
             throw new Error('Failed to fetch categories');
         }
     }
