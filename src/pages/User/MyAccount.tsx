@@ -4,33 +4,40 @@ import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '@/redux/store';
+import UserPosts from '@/components/UserPosts';
+import Messages from '@/components/Messages';
 
 const MyAccount: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {user} = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.user);
+  const [activeTab, setActiveTab] = React.useState<string>("My Posts");
   const handleClick = (item: string) => () => {
-    if (item === "Logout") {
+    if (item === "My Posts") {
+      setActiveTab('My Posts');
+    } else if (item === "Messages") {
+      setActiveTab('Messages');
+    }
+    else if (item === "Logout") {
+      setActiveTab('Logout');
       dispatch(setToken(null));
       dispatch(setUser(null));
       Cookies.remove('token');
       Cookies.remove('user');
       navigate('/');
-     }
+    }
   }
   if (user) {
     return (
     <div className="flex h-screen bg-gray-100">
         <div className="w-1/4 bg-white shadow-md p-4">
-            <h1 className="text-2xl font-bold text-gray-800">My Account</h1>
-            <button className="w-full bg-blue-500 text-white py-2 mt-4 rounded-lg">
-            Messages (0)
-            </button>
+          <h1 className="text-2xl font-bold text-gray-800">My Account</h1>
             <ul className="mt-4 space-y-2">
-          {[
+            {["My Posts",
+            "Messages",
             "Logout"
           ].map((item, index) => (
-            <li key={index} onClick={handleClick(item)} className="py-2 px-4 hover:bg-gray-200 rounded-lg">
+            <li key={index} onClick={handleClick(item)} className={`cursor-pointer ${activeTab === item ? 'bg-green-400' : ''} py-2 px-4 hover:bg-green-400 rounded-lg`}>
               {item}
             </li>
           ))}
@@ -43,10 +50,12 @@ const MyAccount: React.FC = () => {
         </button>
         </div>
         <div className="flex-1 flex flex-col">
-        <h2 className="text-xl font-semibold p-4 border-b">Messages</h2>
-        <div className="flex flex-1">
-        <div className="w-1/3 border-r p-4"></div>
-        </div>
+          {activeTab === "My Posts" && (
+            <UserPosts />
+          )}
+          {activeTab === "Messages" && (
+            <Messages />
+          )}
         </div>
     </div>
   )

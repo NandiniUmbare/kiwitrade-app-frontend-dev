@@ -29,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({children}) => {
       if (token) {
         const userInfo = jwtDecode(token);
         const userDetails = Cookies.get('user');
+        console.log(userDetails);
         if (userDetails) {
           dispatch(setUser({...userInfo,userDetails}));
         } else {

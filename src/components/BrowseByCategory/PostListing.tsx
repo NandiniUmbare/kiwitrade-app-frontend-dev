@@ -5,7 +5,7 @@ import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from '@/redux/slice/posts';
 import { useLocation, useParams } from 'react-router-dom';
-import { Button, Checkbox, List, Radio } from 'antd';
+import { Button, Checkbox, List, Modal, Radio, Slider } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 import MapListing from './MapListing';
@@ -23,6 +23,7 @@ const PostListing: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<boolean>(false);
   const [priceFilter, setPriceFilter] = useState<boolean>(false);
   const [sortByFilter, setSortByFilter] = useState<boolean>(false);
+  const [isCouraselVisible, setIsCouraselVisible] = useState<boolean>(false);
   const sortByFilterRef = useRef<HTMLButtonElement>(null);
   const priceFilterRef = useRef<HTMLButtonElement>(null);
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
@@ -45,36 +46,36 @@ const PostListing: React.FC = () => {
   //     setPosts(response.data);
   //   }
   // }
-  const listings = [
-    {
-      type: 'Condos',
-      price: 'Price Upon Request',
-      description: 'My home general maintenance big or small',
-      location: 'Seven Mile Beach Corridor',
-      image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-    },
-    {
-      type: 'Houses',
-      price: 'CI$ 799,900',
-      description: 'Invest Smart! Secure Steady Rental Income! Cayman Brac!',
-      location: 'Cayman Brac',
-      image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-    },
-    {
-      type: 'Condos',
-      price: 'CI$ 410,000',
-      description: 'Secure Your Slice of Urban Elegance',
-      location: 'George Town',
-      image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-    },
-    {
-      type: 'Houses',
-      price: 'CI$ 2,800,000',
-      description: 'CENTURY 21 | ROYAL PALM ESTATES',
-      location: 'Savannah / Newlands',
-      image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
-    },
-  ];
+  // const listings = [
+  //   {
+  //     type: 'Condos',
+  //     price: 'Price Upon Request',
+  //     description: 'My home general maintenance big or small',
+  //     location: 'Seven Mile Beach Corridor',
+  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
+  //   },
+  //   {
+  //     type: 'Houses',
+  //     price: 'CI$ 799,900',
+  //     description: 'Invest Smart! Secure Steady Rental Income! Cayman Brac!',
+  //     location: 'Cayman Brac',
+  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
+  //   },
+  //   {
+  //     type: 'Condos',
+  //     price: 'CI$ 410,000',
+  //     description: 'Secure Your Slice of Urban Elegance',
+  //     location: 'George Town',
+  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
+  //   },
+  //   {
+  //     type: 'Houses',
+  //     price: 'CI$ 2,800,000',
+  //     description: 'CENTURY 21 | ROYAL PALM ESTATES',
+  //     location: 'Savannah / Newlands',
+  //     image: 'https://www.vz.ae/wp-content/uploads/2022/11/real-estate-licence-in-Dubai.jpg',
+  //   },
+  // ];
   useEffect(() => {
     // console.log(selectedCategory, selectedGroup,params.type);
     // getPosts();
@@ -282,20 +283,47 @@ const PostListing: React.FC = () => {
         </div>
         {view === 'list' ? (
           <div className="w-[100%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {posts.map((post, index) => (
-            <div key={index} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
-              <div className="lg:h-[14%] md:h-[8%] w-[16%] lg:text-[26px] text-[20px] flex flex-col items-center justify-center m-2 rounded-full absolute top-0 right-0 bg-gray-200 opacity-30">
-                <FaHeart />
+            {posts.map((post, index) => {
+              const images = post.photo.split(',');
+              return <div key={index} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="lg:h-[14%] md:h-[8%] w-[16%] lg:text-[26px] text-[20px] flex flex-col items-center justify-center m-2 rounded-full absolute top-0 right-0 bg-gray-200 opacity-30">
+                  <FaHeart />
+                </div>
+                <img
+                  src={images[0]}
+                  alt={post.typeId.toString()}
+                  className="w-full h-40 object-cover"
+                  onClick={() => { }}
+                />
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold">{post.typeId}</h3>
+                  <p className="text-xl font-bold text-blue-600">{post.price}</p>
+                  <p className="text-gray-600">{post.description}</p>
+                  <p className="text-sm text-gray-500">📍 {post.suburbId}</p>
+                </div>
+                <Modal
+                  title="Image Carousel"
+                  open={isCouraselVisible}
+                  onCancel={() => setIsCouraselVisible(false)}
+                  footer={null}
+                  width={800}
+                >
+                  <Slider {...{
+                    dots: true,
+                    infinite: true,
+                    speed: 500,
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                  }}>
+                    {images.map((image, index) => (
+                      <div key={index}>
+                        <img src={image} alt={`Slide ${index}`} style={{ width: "100%" }} />
+                      </div>
+                    ))}
+                  </Slider>
+                </Modal>
               </div>
-              <img src={post.photo} alt={post.typeId.toString()} className="w-full h-40 object-cover" />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{post.typeId}</h3>
-                <p className="text-xl font-bold text-blue-600">{post.price}</p>
-                <p className="text-gray-600">{post.description}</p>
-                <p className="text-sm text-gray-500">📍 {post.suburbId}</p>
-              </div>
-            </div>
-          ))}
+            })}
         </div>
         ) : (
             <div className="w-[100%] h-[500px] bg-gray-200">

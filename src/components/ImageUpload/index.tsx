@@ -5,6 +5,7 @@ import { AxiosProgressEvent } from 'axios';
 import React, { useCallback, useRef, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
+import imageCompression from 'browser-image-compression';
 
 const ImageUpload: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,8 +16,18 @@ const ImageUpload: React.FC = () => {
   const [uploading, setUploading] = useState<boolean>(false);
 
   const postImage = async (file: File) => {
+    const options = {
+        maxSizeMB: 1, // Maximum size in megabytes
+        maxWidthOrHeight: 800, // Resize to fit within this dimension
+        useWebWorker: true, // Use web worker for better performance
+    };
+    const compressed = await imageCompression(file, options);
+    const compressedFile = new File([compressed], file.name, {
+        type: compressed.type,
+        lastModified: Date.now(),
+      });
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', compressedFile);
 
     setUploading(true);
     setUploadProgress(0);
@@ -90,7 +101,7 @@ const ImageUpload: React.FC = () => {
   const dragImage = useRef<number>(0);
   const dragImageOver = useRef<number>(0);
   const handleSort = () => {
-    const imagesClone = [...images];
+    const imagesClone = [...displayImages];
     const temp = imagesClone[dragImage.current];
     imagesClone[dragImage.current] = imagesClone[dragImageOver.current];
     imagesClone[dragImageOver.current] = temp;

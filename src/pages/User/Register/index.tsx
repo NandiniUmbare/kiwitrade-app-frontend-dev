@@ -2,6 +2,7 @@ import { registerUser } from '@/api/data';
 import React, {useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import message from 'antd/es/message';
+import { Button } from 'antd';
 export interface FormDataProps {
     username: string;
     email: string;
@@ -108,7 +109,8 @@ const Register: React.FC = () => {
     }
 
   return (
-    <div className="py-8 flex items-center justify-center z-50 bg-gray-300">
+    <div className="py-8 flex flex-col items-center justify-center z-50 bg-gray-300">
+      <Button className= 'right-[40%]' onClick={() => navigate('/')}>⬅Go back</Button>
       <div className="bg-white p-6 rounded-md shadow-lg relative">
       <h2 className="text-2xl font-semibold text-center text-green-400">Sign In</h2>
         <p className="text-center text-gray-600 mt-1">

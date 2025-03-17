@@ -11,8 +11,9 @@ import { RootState } from '@/redux/store';
 import OptionalFields from './OptionalFields';
 import { validateForm } from '@/helper/validation';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdDetails = ({
   categories,
@@ -29,6 +30,7 @@ const AdDetails = ({
   const [suburb, setSuburb] = useState<SuburbType[]>([]);
   const [marker, setMarker] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 52.9257201, lng: -1.475632 });
+  const [successModal, setSuccessModal] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     title: "",
     districtId: "",
@@ -41,6 +43,7 @@ const AdDetails = ({
   const { images } = useSelector((state: RootState) => state.image);
   const { user } = useSelector((state: RootState) => state.user);
   const userDetails: any = user ? user.userDetails : null;
+  const navigate = useNavigate();
   const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
     setFormData((prevData) => ({
@@ -64,7 +67,7 @@ const AdDetails = ({
     const response = await getSuburb(formData.cityId, formData.districtId);
     setSuburb(response.data);
   };
-  const handleSave = async() => {
+  const handleSave = async () => {
     const errors = validateForm(formData);
     if(Object.keys(errors).length > 0){
       setErrors((prevErrors) => ({
@@ -84,8 +87,8 @@ const AdDetails = ({
       typeId: selectedType,
       photo: images.join(' '),
     }, `"${strigifyJson.replace(/"/g, '\\"')}"`);
-    if(response.status === 200){
-      console.log('Ad posted successfully');
+    if (response.status === 200) {
+      setSuccessModal(true);
     }
   };
   const getCityCoordinates = async () => {
@@ -107,7 +110,6 @@ const AdDetails = ({
     }
     }
   }
-  console.log(marker);
   useEffect(() => {
     getDistrictData();
   }, []);
@@ -343,6 +345,17 @@ const AdDetails = ({
           Save
         </Button>
       </div>
+      <Modal
+        title="Success"
+        open={successModal}
+        onOk={() => {
+          setSuccessModal(false);
+          navigate('/user/account')
+        }}
+        onCancel={() => setSuccessModal(false)}
+        cancelButtonProps={{ style: { display: "none" } }}>
+        <p>Your ad has been successfully posted. It is under review. After approved it will published.</p>
+        </Modal>
     </div>
   );
 };

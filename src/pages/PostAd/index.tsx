@@ -6,11 +6,14 @@ import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers, FaL
 import { AppDispatch, RootState } from '@/redux/store';
 import AdDetails from './AdDetails';
 import { useNavigate } from 'react-router-dom';
+import { setUser } from '@/redux/slice/user';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 
 const PostAd: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, authToken } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const { loading, categories, groups, types, error } = useSelector((state: RootState) => state.category);
   const [selectedCategory, setSelectedCategory] = useState<number>();
@@ -40,20 +43,30 @@ const PostAd: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!user) {
-      navigate('/user/login/page');
+    const token = Cookies.get('token');
+      if (token) {
+        const userInfo = jwtDecode(token);
+        const userDetails = Cookies.get('user');
+        if (userDetails) {
+          dispatch(setUser({...userInfo,userDetails}));
+        } else {
+          dispatch(setUser(null));
+        }
+      }else {
+      dispatch(setUser(null));
     }
-  }, []);
+  }, [authToken]);
+  
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getGroups(selectedCategory ?? 0));
+    selectedCategory && dispatch(getGroups(selectedCategory));
   }, [selectedCategory]);
 
   useEffect(() => {
-    dispatch(getTypes({ categoryId: selectedCategory ?? 0, groupId: selectedGroup ?? 0 }));
+    selectedCategory && selectedGroup && dispatch(getTypes({ categoryId: selectedCategory, groupId: selectedGroup }));
   }, [selectedCategory, selectedGroup]);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { setToken } from '@/redux/slice/user';
+import { Button } from 'antd';
 
 interface FormDataProps {
     email: string;
@@ -53,6 +54,7 @@ const SignIn: React.FC<SignInProps> = ({ onClose }) => {
         });
         if(response.statusCode === 200){
           Cookies.set('token', response.token, { expires: 1 });
+          console.log(response.userDetails);
           Cookies.set('user', JSON.stringify(response.userDetails), { expires: 1 });
           dispatch(setToken(response.token));
           onClose();
@@ -79,7 +81,8 @@ const SignIn: React.FC<SignInProps> = ({ onClose }) => {
               // dispatch(setUser(userInfo));
     }
   return (
-    <div className={`${params.page == 'page' ? 'py-8 flex items-center justify-center z-50 bg-gray-300':''}`}>
+    <div className={`${params.page == 'page' ? 'py-8 flex flex-col items-center justify-center z-50 bg-gray-300' : ''}`}>
+      <Button className={`${params.page == 'page'? 'block' : 'hidden'} right-[40%]`} onClick={() => navigate('/')}>⬅Go back</Button>
     <div className={`${params.page == 'page' ? 'lg:w-[35%] md:w-[50%] bg-white p-6 rounded-md shadow-lg relative':''}`}>
         <h2 className="text-2xl font-semibold text-center text-green-400">Sign In</h2>
         <p className="text-center text-gray-600 mt-1">
