@@ -4,12 +4,12 @@ import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from '@/redux/slice/posts';
 import { useLocation, useParams } from 'react-router-dom';
-import { Button, Carousel, Checkbox, List, Modal, Radio } from 'antd';
+import { Button, Carousel, Checkbox, List, Modal, Pagination, Radio } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 import MapListing from './MapListing';
 import { getGroups, getTypes } from '@/redux/slice/category';
-import { getDistricts, getSuburbs } from '@/redux/slice/location';
+import { getSuburbs } from '@/redux/slice/location';
 
 const PostListing: React.FC = () => {
   const [sectionFilter, setSectionFilter] = useState<boolean>(false);
@@ -22,20 +22,22 @@ const PostListing: React.FC = () => {
   const [priceFilter, setPriceFilter] = useState<boolean>(false);
   const [sortByFilter, setSortByFilter] = useState<boolean>(false);
   const [isCouraselVisible, setIsCouraselVisible] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const sortByFilterRef = useRef<HTMLButtonElement>(null);
   const priceFilterRef = useRef<HTMLButtonElement>(null);
   const categoryFilterRef = useRef<HTMLButtonElement>(null);
   const sectionFilterRef = useRef<HTMLButtonElement>(null);
 
-  const { selectedCategory, selectedGroup, groups, types } = useSelector((state: RootState) => state.category);
+  const { groups, types } = useSelector((state: RootState) => state.category);
   const { suburbs } = useSelector((state: RootState) => state.location);
   const {posts} = useSelector((state: RootState) => state.posts);
+  
   // const [posts, setPosts] = useState<PostType[]>([]);
   const location = useLocation();
   const appDispatch = useDispatch<AppDispatch>();
   const queryParams = new URLSearchParams(location.search);
   const search = queryParams.get("search");
-
+  const itemsPerPage = 20;
   useEffect(() => {
     appDispatch(getPosts());
     appDispatch(getGroups(0));
@@ -241,6 +243,7 @@ const PostListing: React.FC = () => {
           )}
         </div>
         {view === 'list' ? (
+          <>
           <div className="w-[100%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {posts.map((post, index) => {
               const images = post.photo.split(',');
@@ -278,7 +281,15 @@ const PostListing: React.FC = () => {
                 </Modal>
               </div>
             })}
-        </div>
+          </div>
+            <Pagination
+              current={currentPage}
+              pageSize={itemsPerPage}
+              total={posts.length}
+              onChange={(page) => setCurrentPage(page)}
+              className='mt-4 flex justify-center'
+              />
+          </>
         ) : (
             <div className="w-[100%] h-[500px] bg-gray-200">
               <MapListing/>
