@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '@/redux/store';
 import UserPosts from '@/components/UserPosts';
 import Messages from '@/components/Messages';
+import NotificationSettings from '@/components/Notifications';
 
 const MyAccount: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,8 @@ const MyAccount: React.FC = () => {
       setActiveTab('My Posts');
     } else if (item === "Messages") {
       setActiveTab('Messages');
+    } else if (item === "Notification Settings") {
+      setActiveTab("Notification Settings");
     }
     else if (item === "Logout") {
       setActiveTab('Logout');
@@ -30,11 +33,12 @@ const MyAccount: React.FC = () => {
   if (user) {
     return (
     <div className="flex h-screen bg-gray-100">
-        <div className="w-1/4 bg-white shadow-md p-4">
+        <div className="w-[20%] bg-white shadow-md p-4 m-8 rounded-lg border border-gray-300">
           <h1 className="text-2xl font-bold text-gray-800">My Account</h1>
             <ul className="mt-4 space-y-2">
             {["My Posts",
-            "Messages",
+              "Messages",
+            "Notification Settings",
             "Logout"
           ].map((item, index) => (
             <li key={index} onClick={handleClick(item)} className={`cursor-pointer ${activeTab === item ? 'bg-green-400' : ''} py-2 px-4 hover:bg-green-400 rounded-lg`}>
@@ -46,7 +50,7 @@ const MyAccount: React.FC = () => {
           Delete Account
         </button>
         <button onClick={()=>navigate('/post-add')} className="w-full bg-gray-300 text-black py-2 mt-2 rounded-lg">
-          Post Ad
+          ➕ Post Ad
         </button>
         </div>
         <div className="flex-1 flex flex-col">
@@ -55,6 +59,9 @@ const MyAccount: React.FC = () => {
           )}
           {activeTab === "Messages" && (
             <Messages />
+          )}
+          {activeTab === "Notification Settings" && (
+            <NotificationSettings />
           )}
         </div>
     </div>
