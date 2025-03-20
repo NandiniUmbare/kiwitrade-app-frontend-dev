@@ -49,7 +49,7 @@ const UserPosts: React.FC = () => {
                 </div>
                   <div className='flex justify-between gap-4'>
                 <Button
-                  onClick={() => { navigate(`/post-add?podtId=${post.productId}`) }}
+                  onClick={() => { navigate(`/post-add?postId=${post.productId}`) }}
                   className='w-full mt-4 bg-green-500 hover:!bg-green-500 hover:!text-black hover:border-none'>
                   <FaEdit/>Edit</Button>
                 <Button

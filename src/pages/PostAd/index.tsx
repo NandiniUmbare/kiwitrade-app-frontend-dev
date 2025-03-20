@@ -5,7 +5,7 @@ import { getCategories, getGroups, getTypes } from '@/redux/slice/category';
 import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers, FaLeaf } from 'react-icons/fa';
 import { AppDispatch, RootState } from '@/redux/store';
 import AdDetails from './AdDetails';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { setUser } from '@/redux/slice/user';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
@@ -19,8 +19,11 @@ const PostAd: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<number>();
   const [selectedType, setSelectedType] = useState<number>();
   const [selectedGroup, setSelectedGroup] = useState<number>();
+  const [postType, setPostType] = useState<string>();
   const [next, setNext] = useState<boolean>(false);
   const [disable, setDisable] = useState<boolean>(true);
+  const queryParams = new URLSearchParams(location.search);
+  const postId = queryParams.get("postId");
   const iconsMap: Record<number, JSX.Element> = {
     1: <FaBuilding />,
     2: <FaCar />,
@@ -42,6 +45,14 @@ const PostAd: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (postId) {
+      setPostType("edit");
+      setNext(true);
+    } else {
+      setPostType("add")
+    }
+  },[])
   useEffect(() => {
     const token = Cookies.get('token');
       if (token) {

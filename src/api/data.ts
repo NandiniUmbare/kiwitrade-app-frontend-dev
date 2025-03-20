@@ -54,7 +54,7 @@ export const postAd = async(data: FormDataType, optionalData: string) => {
     try {
         console.log(data);
         const response = await axiosInstance.post(`https://api.ekiwitrade.com/UpsertProduct?optionalData=${optionalData}`, data);
-        return response.data;
+        return response;
     } catch (error) {
         console.log(error);
     }

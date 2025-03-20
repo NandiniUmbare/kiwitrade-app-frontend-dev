@@ -86,7 +86,8 @@ const AdDetails = ({
       groupId: selectedGroup,
       typeId: selectedType,
       photo: images.join(' '),
-    }, `"${strigifyJson.replace(/"/g, '\\"')}"`);
+    }, JSON.stringify(optionalFields));
+    console.log(response)
     if (response.status === 200) {
       setSuccessModal(true);
     }
