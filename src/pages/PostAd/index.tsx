@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { CgAdd } from 'react-icons/cg';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories, getGroups, getTypes } from '@/redux/slice/category';
-import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers, FaLeaf } from 'react-icons/fa';
+import { FaBuilding, FaCar, FaIndustry, FaUtensils, FaShoppingCart, FaUsers } from 'react-icons/fa';
 import { AppDispatch, RootState } from '@/redux/store';
 import AdDetails from './AdDetails';
-import { useNavigate, useParams } from 'react-router-dom';
+// import { useNavigate, useParams } from 'react-router-dom';
 import { setUser } from '@/redux/slice/user';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
@@ -13,9 +13,9 @@ import { jwtDecode } from 'jwt-decode';
 
 const PostAd: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, authToken } = useSelector((state: RootState) => state.user);
-  const navigate = useNavigate();
-  const { loading, categories, groups, types, error } = useSelector((state: RootState) => state.category);
+  const { authToken } = useSelector((state: RootState) => state.user);
+  // const navigate = useNavigate();
+  const { categories, groups, types } = useSelector((state: RootState) => state.category);
   const [selectedCategory, setSelectedCategory] = useState<number>();
   const [selectedType, setSelectedType] = useState<number>();
   const [selectedGroup, setSelectedGroup] = useState<number>();
@@ -44,7 +44,7 @@ const PostAd: React.FC = () => {
       return false;
     }
   };
-
+  console.log(postType)
   useEffect(() => {
     if (postId) {
       setPostType("edit");
@@ -126,7 +126,7 @@ const PostAd: React.FC = () => {
           <div>
             <h3 className="text-left text-2xl items-center">Select a Type</h3>
             <div className="mt-2 mb-6 flex flex-wrap w-full text-center">
-              {types && types.map((data) => (
+              {selectedCategory && selectedGroup && types?.map((data) => (
                 <div
                   key={data.typeId}
                   onClick={() => setSelectedType(data.typeId)}

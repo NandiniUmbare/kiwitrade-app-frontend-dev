@@ -42,7 +42,7 @@ const OptionalFields: React.FC<OptionalFieldsType> = ({
         <h3 className='font-semibold text-xl text-left'>Details</h3>
         <p className='text-left my-2 text-l'>Your advert has a greater chance of being seen if you select some of these searchable options.</p>
         <div className='flex flex-wrap justify-between'>
-        {fieldData && fieldData?.map((field: Fields, index:number) => (
+        {fieldData && fieldData?.map((field: Fields) => (
           <div className="relative w-[46%]" key={field.id}>
             
             <div className='w-[100%]'>

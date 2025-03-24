@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const BrowseByCategory: React.FC = () => {
   const appDispatch = useDispatch<AppDispatch>();
   const dispatch = useDispatch();
-  const { loading, categories, error } = useSelector((state: RootState) => state.category);
+  const { categories } = useSelector((state: RootState) => state.category);
   const navigate = useNavigate();
   
   const redirection = (id: number): string => {

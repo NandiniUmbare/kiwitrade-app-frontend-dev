@@ -73,7 +73,7 @@ const SignIn: React.FC<SignInProps> = ({ onClose }) => {
     const handleLoginSuccess = (response: CredentialResponse) => {
       const idToken = response.credential;
       if (idToken) {
-        const userInfo = jwtDecode(idToken); 
+        const userInfo: any = jwtDecode(idToken); 
         googleLogin(userInfo.email);
       } else {
         console.error('ID token is undefined');

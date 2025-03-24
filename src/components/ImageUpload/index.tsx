@@ -3,7 +3,7 @@ import { setImages } from '@/redux/slice/images';
 import { RootState } from '@/redux/store';
 import { AxiosProgressEvent } from 'axios';
 import React, { useCallback, useRef, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { FileRejection, useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import imageCompression from 'browser-image-compression';
 
@@ -43,11 +43,11 @@ const ImageUpload: React.FC = () => {
       setNotification('File uploaded successfully!');
       setUploadProgress(100);
       if (response) {
-        dispatch(setImages([...images, response.filePath]));
+        dispatch(setImages([...images, (response as any).filePath]));
       }
       setDisplayImages([...displayImages, URL.createObjectURL(file)]);
-    } catch (error) {
-      setNotification('Failed to upload image : ',error );
+    } catch (error: any) {
+      setNotification(`Failed to upload image: ${error.message}`);
     } finally {
       setUploading(false);
     }

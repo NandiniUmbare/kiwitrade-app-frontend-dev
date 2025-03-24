@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaHeart, FaMap, FaSearch, FaTh } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPosts } from '@/redux/slice/posts';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Button, Carousel, Checkbox, List, Modal, Pagination, Radio } from 'antd';
 import { KeyOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
@@ -33,10 +33,10 @@ const PostListing: React.FC = () => {
   const {posts} = useSelector((state: RootState) => state.posts);
   
   // const [posts, setPosts] = useState<PostType[]>([]);
-  const location = useLocation();
+  // const location = useLocation();
   const appDispatch = useDispatch<AppDispatch>();
-  const queryParams = new URLSearchParams(location.search);
-  const search = queryParams.get("search");
+  // const queryParams = new URLSearchParams(location.search);
+  // const search = queryParams.get("search");
   const itemsPerPage = 20;
   useEffect(() => {
     appDispatch(getPosts());
@@ -44,6 +44,7 @@ const PostListing: React.FC = () => {
     appDispatch(getTypes({ categoryId: 0, groupId: 0 }));
     appDispatch(getSuburbs({ cityId: 0, districtId: 0 }));
   }, []);
+  console.log(selectedGroupTab)
   return (
     <div>
       <div className="flex items-center gap-2 mb-6 px-14 py-4">
@@ -245,10 +246,10 @@ const PostListing: React.FC = () => {
         {view === 'list' ? (
           <>
           <div className="w-[100%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {posts.map((post, index) => {
+            {posts.map((post) => {
               const images = post.photo.split(',');
               const type = types.find((type) => type.typeId == post?.typeId);
-              return <div key={post?.productId} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
+              return <div key={post?.id} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="lg:h-[14%] md:h-[8%] w-[16%] lg:text-[26px] text-[20px] flex flex-col items-center justify-center m-2 rounded-full absolute top-0 right-0 bg-gray-200 opacity-30">
                   <FaHeart />
                 </div>

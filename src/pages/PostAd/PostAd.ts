@@ -35,6 +35,7 @@ export interface FormDataType {
     suburbId: number;
     createdDate: Date;
     createdBy: number;
+    userId: string;
     coordinate: string;
     categoryId: number;
     groupId: number;
@@ -59,9 +60,9 @@ export interface SuburbType {
 }
 
 export interface PostErrorsType { 
-    title: string;
-    districtId: string;
-    cityId: string;
-    suburbId: string;
-    description: string;
+    title?: string;
+    districtId?: string;
+    cityId?: string;
+    suburbId?: string;
+    description?: string;
 }

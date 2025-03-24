@@ -50,10 +50,10 @@ export const uploadImage = async(file: FormData, onUploadProgress: (progressEven
     }
 }
 
-export const postAd = async(data: FormDataType, optionalData: string) => {
+export const postAd = async(data: FormDataType) => {
     try {
         console.log(data);
-        const response = await axiosInstance.post(`https://api.ekiwitrade.com/UpsertProduct?optionalData=${optionalData}`, data);
+        const response = await axiosInstance.post(`https://api.ekiwitrade.com/UpsertProduct`, data);
         return response;
     } catch (error) {
         console.log(error);

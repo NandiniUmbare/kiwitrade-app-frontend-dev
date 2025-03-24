@@ -2,7 +2,7 @@ import { axiosInstance } from "@/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export interface Post { 
-    postId: number;
+    id: number;
     title: string;
     districtId: number;
     cityId: number;

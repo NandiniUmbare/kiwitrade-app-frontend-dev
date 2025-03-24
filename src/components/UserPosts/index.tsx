@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 const UserPosts: React.FC = () => {
   const { posts } = useSelector((state: RootState) => state.posts);
-  const { user } = useSelector((state: RootState) => state.user);
+  // const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const UserPosts: React.FC = () => {
       posts.map((post) => {
         const images = post.photo.split(',');
         return (
-          <div key={post?.productId} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
+          <div key={post?.id} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
                 <img
                   src={images[0]}
                   className="w-full h-40 object-cover"
@@ -49,7 +49,7 @@ const UserPosts: React.FC = () => {
                 </div>
                   <div className='flex justify-between gap-4'>
                 <Button
-                  onClick={() => { navigate(`/post-add?postId=${post.productId}`) }}
+                  onClick={() => { navigate(`/post-add?postId=${post.id}`) }}
                   className='w-full mt-4 bg-green-500 hover:!bg-green-500 hover:!text-black hover:border-none'>
                   <FaEdit/>Edit</Button>
                 <Button

@@ -42,7 +42,7 @@ const AdDetails = ({
   const [isOn, setIsOn] = useState<boolean>(false);
   const { images } = useSelector((state: RootState) => state.image);
   const { user } = useSelector((state: RootState) => state.user);
-  const userDetails: any = user ? user.userDetails : null;
+  const userDetails: any = user ? (user as any).userDetails : null;
   const navigate = useNavigate();
   const onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = event.target;
@@ -76,7 +76,6 @@ const AdDetails = ({
       }));
       return;
     }
-    const strigifyJson = JSON.stringify(optionalFields);
     const response = await postAd({
       ...formData,
       createdDate: new Date(),
@@ -85,10 +84,11 @@ const AdDetails = ({
       categoryId: selectedCategory,
       groupId: selectedGroup,
       typeId: selectedType,
+      userId: String(JSON.parse(userDetails).userId),
       photo: images.join(' '),
-    }, JSON.stringify(optionalFields));
+    });
     console.log(response)
-    if (response.status === 200) {
+    if (response?.status === 200) {
       setSuccessModal(true);
     }
   };
