@@ -43,7 +43,7 @@ const ImageUpload: React.FC = () => {
       setNotification('File uploaded successfully!');
       setUploadProgress(100);
       if (response) {
-        dispatch(setImages([...images, (response as any).filePath]));
+        dispatch(setImages([...images, (response as any).data.filePath]));
       }
       setDisplayImages([...displayImages, URL.createObjectURL(file)]);
     } catch (error: any) {

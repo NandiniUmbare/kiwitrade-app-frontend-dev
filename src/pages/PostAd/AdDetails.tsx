@@ -55,6 +55,7 @@ const AdDetails = ({
       [id]: "",
     }));
   };
+  console.log(images)
   const getDistrictData = async () => {
     const response = await getDistrict();
     setDistrict(response.data);
