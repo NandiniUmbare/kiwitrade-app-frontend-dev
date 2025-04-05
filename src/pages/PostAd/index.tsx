@@ -44,7 +44,6 @@ const PostAd: React.FC = () => {
       return false;
     }
   };
-  console.log(postType)
   useEffect(() => {
     if (postId) {
       setPostType("edit");
@@ -150,13 +149,18 @@ const PostAd: React.FC = () => {
       ) : (
         <div>
           <AdDetails
-            categories={categories}
-            selectedCategory={selectedCategory ?? 0}
-            groups={groups}
-            selectedGroup={selectedGroup ?? 0}
-            typeData={types}
-            selectedType={selectedType ?? 0}
-            setNext={setNext}
+              categories={categories}
+              selectedCategory={selectedCategory ?? 0}
+              setSelectedCategory={setSelectedCategory}
+              groups={groups}
+              selectedGroup={selectedGroup ?? 0}
+              setSelectedGoup={setSelectedGroup}
+              typeData={types}
+              selectedType={selectedType ?? 0}
+              setSelectedType={setSelectedType}
+              setNext={setNext}
+              postId={postId || null}
+              postType={postType || ''}  
           />
         </div>
       )}

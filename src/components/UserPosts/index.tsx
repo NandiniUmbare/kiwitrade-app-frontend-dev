@@ -1,5 +1,5 @@
 import { getSuburbs } from '@/redux/slice/location';
-import { getPosts } from '@/redux/slice/posts';
+import { getUserPosts } from '@/redux/slice/posts';
 import { AppDispatch, RootState } from '@/redux/store';
 import { Button, Select } from 'antd';
 import React, { useEffect } from 'react'
@@ -9,23 +9,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const UserPosts: React.FC = () => {
-  const { posts } = useSelector((state: RootState) => state.posts);
-  // const { user } = useSelector((state: RootState) => state.user);
+  const { userPosts } = useSelector((state: RootState) => state.posts);
+  const { user } = useSelector((state: RootState) => state.user);
+  const userDetails = user ? (user as any)?.userDetails : null;
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => { 
-    dispatch(getPosts());
+    dispatch(getUserPosts(JSON.parse(userDetails).userId));
     dispatch(getSuburbs({ cityId: 0, districtId: 0 }));
-  },[])
+  }, [])
+  const filterdata = userPosts.map(item => {
+    return item.userId
+  })
+  console.log(filterdata)
   return (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6'>{
-      posts.map((post) => {
-        const images = post.photo.split(',');
+      userPosts.length > 0 &&
+      userPosts.filter(item => item.userId && item.userId == userDetails.userId)
+        .map((post) => {
+        const images = post.photo !== '' && post?.photo?.split(',');
         return (
           <div key={post?.id} className="relative bg-white shadow-lg rounded-lg overflow-hidden">
                 <img
-                  src={images[0]}
+                  src={Array.isArray(images) ? images[0] : ''}
                   className="w-full h-40 object-cover"
                 />
                 <div className="p-4">
@@ -41,10 +48,11 @@ const UserPosts: React.FC = () => {
               <div className='flex justify-between gap-4 mt-4'>
                 <div className='flex flex-col'>
                   <h2 className='font-semibold text-l'>Updated</h2>
-                  <label>{ post.createdDate?.toDateString()}</label>
+                  <label>{post?.createdDate ? new Date(post.createdDate).toISOString().slice(0, 10) : ''}</label>
                 </div>
                 <div className='flex flex-col'>
                   <h2 className='font-semibold text-l'>Expires</h2>
+                  <label></label>
                 </div>
                 </div>
                   <div className='flex justify-between gap-4'>

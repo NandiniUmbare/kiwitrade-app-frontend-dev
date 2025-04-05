@@ -18,11 +18,16 @@ import { useNavigate } from 'react-router-dom';
 const AdDetails = ({
   categories,
   selectedCategory,
+  setSelectedCategory,
+  setSelectedGoup,
+  setSelectedType,
   groups,
   selectedGroup,
   typeData,
   selectedType,
-  setNext
+  setNext,
+  postId,
+  postType
 }: AdDetailsTypes) => {
   const [errors, setErrors] = useState<PostErrorsType>({});
   const [district, setDistrict] = useState<DistrictType[]>([]);
@@ -37,10 +42,12 @@ const AdDetails = ({
     cityId: "",
     suburbId: "",
     description: "",
+    noPrice: false
   } as unknown as FormDataType);
   const [optionalFields, setOptionalFields] = useState({});
   const [isOn, setIsOn] = useState<boolean>(false);
   const { images } = useSelector((state: RootState) => state.image);
+  const { userPosts } = useSelector((state: RootState) => state.posts);
   const { user } = useSelector((state: RootState) => state.user);
   const userDetails: any = user ? (user as any).userDetails : null;
   const navigate = useNavigate();
@@ -55,7 +62,6 @@ const AdDetails = ({
       [id]: "",
     }));
   };
-  console.log(images)
   const getDistrictData = async () => {
     const response = await getDistrict();
     setDistrict(response.data);
@@ -79,6 +85,11 @@ const AdDetails = ({
     }
     const response = await postAd({
       ...formData,
+      districtId: Number(formData.districtId),
+      cityId: Number(formData.cityId),
+      suburbId: Number(formData.suburbId),
+      price: Number(formData.price),
+      noPrice: formData.noPrice?.toString(),
       createdDate: new Date(),
       createdBy: JSON.parse(userDetails).userId,
       coordinate: `${marker?.lat},${marker?.lng}`,
@@ -86,9 +97,9 @@ const AdDetails = ({
       groupId: selectedGroup,
       typeId: selectedType,
       userId: String(JSON.parse(userDetails).userId),
-      photo: images.join(' '),
+      photo: images.join(','),
+      optionalData: JSON.stringify(optionalFields)
     });
-    console.log(response)
     if (response?.status === 200) {
       setSuccessModal(true);
     }
@@ -113,8 +124,39 @@ const AdDetails = ({
     }
   }
   useEffect(() => {
+    if (postId && postType === 'edit') {
+      // setUserPostData();
+      const post = userPosts.find(item => item.id === Number(postId));
+      if (post) {
+        setFormData({
+          title: post.title || "",
+          districtId: post.districtId || 0,
+          cityId: post.cityId || 0,
+          suburbId: post.suburbId || 0,
+          description: post.description || "",
+          createdDate: post.createdDate || new Date(),
+          photo: post.photo || "",
+          noPrice: post.noPrice || "",
+          price: post.price || 0,
+          coordinate: post.coordinate || "",
+          categoryId: post.categoryId || 0,
+          groupId: post.groupId || 0,
+          typeId: post.typeId || 0,
+          optionalData: post.optionalData || ""
+        });
+      }
+      setSelectedCategory(post?.categoryId || 0); 
+      setSelectedGoup(post?.groupId || 0);
+      setSelectedType(post?.typeId || 0);
+      setMarker(post?.coordinate ? { 
+        lat: parseFloat(post.coordinate.split(',')[0]), 
+        lng: parseFloat(post.coordinate.split(',')[1]) 
+      } : null)
+      getSuburbData();
+    }
     getDistrictData();
   }, []);
+  console.log(suburb)
   useEffect(() => {
     getCityData();
     getSuburbData();
@@ -208,7 +250,7 @@ const AdDetails = ({
                 onChange={(e) => onChange(e)}
               >
                 <option value="" disabled></option>
-                {suburb?.map((item: SuburbType) => (
+                {suburb.map((item: SuburbType) => (
                   <option key={item.suburbId} value={item.suburbId}>
                     {item.suburbName}
                   </option>
@@ -344,7 +386,7 @@ const AdDetails = ({
       <hr className='my-12'/>
       <div className="flex justify-end">
         <Button size='large' onClick={handleSave} className={`text-2xl text-white px-6 py-4 rounded-lg bg-green-500`}>
-          Save
+          {postType === 'add' ? 'Save' : 'Update'}
         </Button>
       </div>
       <Modal

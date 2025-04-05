@@ -32,7 +32,7 @@ const MyAccount: React.FC = () => {
   }
   if (user) {
     return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-[100%] bg-gray-100">
         <div className="w-[20%] bg-white shadow-md p-4 m-8 rounded-lg border border-gray-300">
           <h1 className="text-2xl font-bold text-gray-800">My Account</h1>
             <ul className="mt-4 space-y-2">

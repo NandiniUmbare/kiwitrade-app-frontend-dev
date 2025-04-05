@@ -20,7 +20,12 @@ export interface AdDetailsTypes {
     selectedGroup:number; 
     typeData:Type[];
     selectedType:number;
-    setNext: (next: boolean) => void
+    setNext: (next: boolean) => void;
+    postId: string | null;
+    postType: string;
+    setSelectedCategory: (categoryId: number) => void;
+    setSelectedGoup: (groupId: number) => void;
+    setSelectedType: (typeId: number) => void;
 }
 
 export interface DistrictType {
@@ -34,8 +39,8 @@ export interface FormDataType {
     cityId: number;
     suburbId: number;
     createdDate: Date;
-    createdBy: number;
-    userId: string;
+    createdBy?: number;
+    userId?: string;
     coordinate: string;
     categoryId: number;
     groupId: number;
@@ -44,6 +49,7 @@ export interface FormDataType {
     price?:number;
     noPrice?: string;
     description: string;
+    optionalData: string;
 }
 
 export interface CityType {
